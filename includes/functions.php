@@ -33,23 +33,35 @@ function cartCount()
 function getProducts($searchstring = "", $genre = "all", $format = "all", $offset = 0)
 {
   global $db;
-  //Add use of search string.
 
-  if ($genre == "all" and $format = "all") {
+  //Add use of search string.
+  $query_portion = ' ';
+  if ($searchstring != "") {
+    $strings = explode(' ', $searchstring);
+    $query_portion = ' AND (';
+    foreach ($strings as $value) {
+      $query_portion .= "album LIKE '$searchstring%' OR artist LIKE '$searchstring%' ";
+    }
+    $query_portion .= ') ';
+  }
+
+  if ($genre == "all" and $format == "all") {
     $searchQuery = "SELECT *
 FROM products
-WHERE stock > 0
-ORDER BY id
+WHERE stock > 0" .
+      $query_portion .
+      "ORDER BY id
 LIMIT 15 
 OFFSET $offset
 ";
   } elseif ($genre == "all" and $format != "all") {
-    $searchQuery = "SELECT * FROM products WHERE format = $format and  stock > 0 LIMIT 15 OFFSET $offset ORDER BY id";
+    $searchQuery = "SELECT * FROM products WHERE format = $format and  stock > 0  ORDER BY id LIMIT 15 OFFSET $offset";
   } elseif ($genre != "all" and $format == "all") {
-    $searchQuery = "SELECT * FROM products WHERE $genre IN (genre1, genre2, genre3) and stock > 0 LIMIT 15 OFFSET $offset ORDER BY id";
+    $searchQuery = "SELECT * FROM products WHERE (genre1 = '$genre' OR  genre2 = '$genre' OR  genre3 = '$genre') AND stock > 0 $query_portion ORDER BY id LIMIT 15 OFFSET $offset";
   } else {
     $searchQuery = "SELECT * FROM products where stock >0 LIMIT 15 OFFSET $offset ORDER BY id";
   }
+
 
   $searchResults = mysqli_query($db, $searchQuery);
 
@@ -115,7 +127,9 @@ OFFSET $offset
 
 if (isset($_POST['action'])) {
   if ($_POST['action'] == 'getProducts') {
-    if (isset($_POST['offset_increment'])) {
+    if (isset($_POST['genre_option'])) {
+      getProducts($searchstring = "", $genre = $_POST['genre_option'], $format = "all", $offset = 0);
+    } elseif (isset($_POST['offset_increment'])) {
       getProducts("", "all", "all", intval($_POST['offset_increment'])); // Pass the value without assignment
       echo "<script>console.log(" . intval($_POST['offset_increment']) . ")</script>";
     } else {

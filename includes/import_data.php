@@ -17,6 +17,7 @@ $headers = array_shift($rows);
 
 // Add null strings depending on the number of genres
 foreach ($rows as $row) {
+  $row[3] = str_replace('/', ', ', $row[3]);
   $genres = explode(', ', $row[3]);
   if (count($genres) == 1) {
     $genres[] = null;

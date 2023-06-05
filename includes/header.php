@@ -40,7 +40,7 @@
           <a href="by_format.php"><strong>Music by format</strong> </a>
         </div>
         <div class="dropdownItem">
-          <a href="by_genre.php"><strong>Music by genre</strong></a>
+          <a id="byGenre" href="by_genre.php"><strong>Music by genre</strong></a>
         </div>
         <div>
           <a href="about.php"><strong>About</strong></a>
@@ -74,6 +74,7 @@
       </div>
 
       <script>
+
         function openNav() {
           if ($(window).width() > 1200) {
             document.getElementById("mySidenav").style.width = "300px";

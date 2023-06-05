@@ -15,8 +15,8 @@ include("includes/db.php");
     </div>
     <div class="center">
       <div class="home__paginator">
-        <button id="prevPage" href="#">❮</button>
-        <button id="nextPage" href="#">❯</button>
+        <button id="prevPage">❮</button>
+        <button id="nextPage">❯</button>
       </div>
     </div>
   </div>
