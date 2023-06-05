@@ -1,0 +1,11 @@
+RewriteEngine On
+RewriteRule ^([0-9]+)$ product.php?pro_id=$1 [QSA,NC,L]
+RewriteRule ^([0-9]+)$ admin/update_product.php?id=$1 [QSA,NC,L]
+
+<FilesMatch "\.(css|png)$">
+Header set Cache-Control "max-age=10, public"
+</FilesMatch>
+
+# Set custom error documents
+# ErrorDocument 404 /404.html
+# ErrorDocument 500 /500.html

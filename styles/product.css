@@ -1,0 +1,146 @@
+main {
+  background-color: #f1f1f1;
+}
+
+.productDetails__container {
+  max-width: 1000px;
+  margin: 20px auto;
+  background-color: #fff;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: space-between;
+  flex-direction: column;
+}
+
+.productDetails__top {
+  display: flex;
+  align-items: center;
+}
+
+.productDetails__left {
+  max-width: 50%;
+  margin-bottom: 20px;
+}
+.productDetails__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.productDetails__right {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab {
+  margin-left: 1.5em;
+  display: flex;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.tab button {
+  padding: 10px;
+  background-color: #f1f1f1;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  border-radius: 0.2em;
+}
+
+.tab button:hover {
+  background-color: #ddd;
+}
+
+.tab button.active {
+  background-color: #9e9b9b;
+}
+
+.productDetails__tabcontent {
+  display: none;
+  padding: 20px;
+  border: 1px solid #ccc;
+  margin-left: 1em;
+  box-shadow: -2px 2px 2px 2px #9e9b9b;
+}
+
+hr {
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+  margin-left: auto;
+  margin-right: auto;
+  border-style: inset;
+  border-width: 1px;
+}
+
+.productDetails__tabcontent > td {
+  color: black;
+}
+
+.productDetails__tabcontent > td > p {
+  color: #666;
+}
+
+.productDetails__tabcontent h1,
+.productDetails__tabcontent h2,
+.productDetails__tabcontent h3 {
+  margin-top: 0;
+}
+
+.productDetails__cart {
+  width: 100%;
+  margin-top: 1em;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.productDetails__bottom {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 100%;
+}
+
+.productDetails__bottom > h3 {
+  font-size: 32px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+td {
+  padding: 10px;
+}
+
+td:first-child {
+  width: 120px;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+td:last-child {
+  text-align: left;
+}
+
+td[rowspan] {
+  vertical-align: top;
+}
+
+@media screen and (min-width: 768px) {
+  .productDetails__left {
+  }
+
+  .productDetails__right {
+  }
+
+  .productDetails__tabcontent {
+    display: block;
+  }
+}

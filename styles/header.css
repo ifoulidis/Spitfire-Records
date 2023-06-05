@@ -1,0 +1,188 @@
+header {
+  margin: 0;
+  padding: 0;
+
+  background-color: rgb(30, 30, 30);
+}
+
+:any-link {
+  color: inherit;
+  padding: 8px 8px 8px 8px;
+  text-decoration: none;
+  display: block;
+  transition: 0.3s;
+}
+:any-link:active {
+  color: inherit;
+  padding: 8px 8px 8px 8px;
+  text-decoration: none;
+  display: block;
+  transition: 0.3s;
+}
+
+.sidenav {
+  height: 100%;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: rgb(35, 35, 35);
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 60px;
+  color: rgb(255, 18, 18);
+  font-size: xx-large;
+}
+
+.sidenav > a {
+  padding: 8px 8px 8px 8px;
+  text-decoration: none;
+  font-size: 25px;
+  color: rgb(255, 18, 18);
+  display: block;
+  transition: 0.3s;
+  font-size: 2em;
+}
+
+.sidenav a:visited {
+  text-decoration: none;
+  color: rgb(255, 18, 18);
+}
+.sidenav a:active {
+  text-decoration: none;
+  color: rgb(255, 18, 18);
+}
+
+.sidenav div {
+  border: none;
+  border-left: none;
+  background-color: none;
+}
+
+.sidenav a:hover {
+  color: rgb(0, 217, 255);
+}
+
+.sidenav .closebtn {
+  position: absolute;
+  top: 0;
+  right: 25px;
+  font-size: 36px;
+  margin-left: 50px;
+}
+
+.menu {
+  display: flex;
+  width: 100%;
+  text-align: center;
+  margin: 0;
+}
+
+.menu__logo {
+  font-family: "Bruno Ace", cursive;
+  font-size: 3em;
+  padding: 8px;
+  margin: 0px;
+  color: #e01f1f;
+}
+
+.logo {
+  display: flex;
+  width: 60%;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.logo div {
+  display: flex;
+  flex-direction: column;
+}
+
+.menu__logo {
+  margin: 0;
+}
+
+@media screen and (max-width: 480px) {
+  .logo {
+    flex-direction: column; /* Stack items vertically */
+  }
+
+  .menu__logo {
+    font-size: 2em; /* Adjust the font size as desired */
+  }
+}
+
+.menu__right {
+  float: right;
+  width: 20%;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+}
+
+.menu__cart {
+  cursor: pointer;
+  margin-right: 10px;
+}
+.menu__bars {
+  color: white;
+  font-size: x-large;
+  overflow: visible;
+}
+
+.menu > a,
+.menu > a:hover,
+.menu > a:active,
+.menu > a:visited {
+  text-decoration: none;
+  color: inherit;
+}
+
+.menu__left {
+  float: left;
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hamburgerBar {
+  width: 30px;
+  height: 3px;
+  background-color: white;
+  margin: 6px 0;
+}
+
+.dropdownItem > a:after {
+  content: "";
+  border: 4px solid transparent;
+  border-top: 4px solid white;
+  margin-left: 2px;
+  margin-bottom: 3px;
+  display: inline-block;
+  vertical-align: bottom;
+}
+
+@media screen and (max-height: 1200px) {
+  /* This keeps the main logo centred */
+  .menu__right,
+  .menu__left {
+    width: 10%;
+  }
+  .logo {
+    width: 80%;
+  }
+}
+
+@media screen and (max-height: 450px) {
+  .sidenav {
+    padding-top: 15px;
+  }
+  .sidenav a {
+    font-size: 18px;
+  }
+}

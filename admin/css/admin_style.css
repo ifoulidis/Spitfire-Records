@@ -1,0 +1,64 @@
+body {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+a,
+:any-link {
+  padding: 8px 8px 8px 8px;
+  text-decoration: none;
+  color: red;
+  font-weight: 700;
+  display: block;
+  transition: 0.3s;
+}
+
+a:visited {
+  text-decoration: none;
+  color: red(113, 247, 60);
+}
+a:active {
+  text-decoration: none;
+  color: rgb(114, 32, 32);
+}
+
+.updateLink {
+  background-color: black;
+  border-radius: 0.2em;
+}
+
+.grid-container {
+  display: grid;
+  padding-top: 3rem;
+  padding-left: 8%;
+  padding-right: 8%;
+  margin: 1.5rem;
+  gap: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.card {
+  background-color: rgba(40, 40, 40, 0.9);
+  text-align: center;
+  margin: 5px 0;
+  border-radius: 0.2em;
+  border: 1px solid #e1dfdf;
+  color: red;
+}
+
+@media screen and (max-width: 1280px) {
+  .grid-container {
+    grid-template-columns: repeat(2, 1fr);
+    padding: 5%;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .grid-container {
+    grid-template-columns: repeat(1, 1fr);
+    padding: 5%;
+  }
+}
