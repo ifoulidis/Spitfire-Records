@@ -1,8 +1,7 @@
 header {
   margin: 0;
   padding: 0;
-
-  background-color: rgb(30, 30, 30);
+  background-color: white;
 }
 
 :any-link {
@@ -27,19 +26,20 @@ header {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: rgb(35, 35, 35);
+  background-color: white;
   overflow-x: hidden;
+  overflow-y: visible;
   transition: 0.5s;
   padding-top: 60px;
-  color: rgb(255, 18, 18);
-  font-size: xx-large;
+  color: rgb(120, 120, 120);
+  font-size: x-large;
 }
 
 .sidenav > a {
   padding: 8px 8px 8px 8px;
   text-decoration: none;
   font-size: 25px;
-  color: rgb(255, 18, 18);
+  color: rgb(120, 120, 120);
   display: block;
   transition: 0.3s;
   font-size: 2em;
@@ -47,21 +47,22 @@ header {
 
 .sidenav a:visited {
   text-decoration: none;
-  color: rgb(255, 18, 18);
+  color: rgb(120, 120, 120);
 }
 .sidenav a:active {
   text-decoration: none;
-  color: rgb(255, 18, 18);
+  color: rgb(120, 120, 120);
 }
 
 .sidenav div {
+  padding-left: 15px;
   border: none;
   border-left: none;
   background-color: none;
 }
 
 .sidenav a:hover {
-  color: rgb(0, 217, 255);
+  color: rgb(255, 18, 18);
 }
 
 .sidenav .closebtn {
@@ -77,14 +78,7 @@ header {
   width: 100%;
   text-align: center;
   margin: 0;
-}
-
-.menu__logo {
-  font-family: "Bruno Ace", cursive;
-  font-size: 3em;
-  padding: 8px;
-  margin: 0px;
-  color: #e01f1f;
+  vertical-align: top;
 }
 
 .logo {
@@ -95,43 +89,55 @@ header {
   text-align: center;
 }
 
+.logo > img {
+  mix-blend-mode: multiply;
+  width: auto;
+  min-height: 80px;
+  max-height: 200px;
+}
+
+#main_logo {
+  width: 150px;
+  height: 120px;
+}
+
+#main_title {
+  width: 340.5px;
+  height: 110px;
+}
+
 .logo div {
   display: flex;
   flex-direction: column;
 }
 
-.menu__logo {
-  margin: 0;
-}
-
-@media screen and (max-width: 480px) {
-  .logo {
-    flex-direction: column; /* Stack items vertically */
-  }
-
-  .menu__logo {
-    font-size: 2em; /* Adjust the font size as desired */
-  }
-}
-
 .menu__right {
-  float: right;
   width: 20%;
   text-align: center;
   display: flex;
+  padding-top: 1em;
+  height: 50%;
   align-items: center;
-  justify-content: center;
-  color: white;
+  justify-content: flex-end;
+  color: black;
+  padding-right: 1em;
 }
 
 .menu__cart {
   cursor: pointer;
   margin-right: 10px;
 }
+
 .menu__bars {
-  color: white;
+  color: black;
   font-size: x-large;
   overflow: visible;
+}
+
+@media screen and (max-height: 450px) {
+  .menu__bars {
+    font-size: medium;
+  }
 }
 
 .menu > a,
@@ -147,42 +153,77 @@ header {
   width: 20%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
+  padding-left: 1em;
+  height: 50%;
 }
 
 .hamburgerBar {
   width: 30px;
   height: 3px;
-  background-color: white;
+  background-color: black;
   margin: 6px 0;
 }
 
-.dropdownItem > a:after {
-  content: "";
-  border: 4px solid transparent;
-  border-top: 4px solid white;
-  margin-left: 2px;
-  margin-bottom: 3px;
-  display: inline-block;
-  vertical-align: bottom;
+.dropdownItem {
+  display: block;
+  margin-right: 10px;
+  margin-bottom: 1.5em;
 }
 
-@media screen and (max-height: 1200px) {
-  /* This keeps the main logo centred */
-  .menu__right,
-  .menu__left {
-    width: 10%;
+.dropdown-content {
+  display: none;
+  padding: 10px;
+  max-height: 200px; /* Adjust the max height as needed */
+  overflow-y: auto;
+}
+
+.dropdown-content a {
+  color: inherit;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.dropdownItem.open .dropdown-content {
+  display: block;
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 9998; /* Set the z-index below the menu */
+}
+
+@media screen and (max-width: 775px) {
+  #main_logo {
+    width: 60px;
+    height: 48px;
   }
-  .logo {
-    width: 80%;
+  #main_title {
+    width: 136.2px;
+    height: 44px;
   }
 }
 
-@media screen and (max-height: 450px) {
+@media screen and (max-width: 450px) {
   .sidenav {
     padding-top: 15px;
   }
-  .sidenav a {
-    font-size: 18px;
+
+  .sidenav div {
+    padding-left: 15px;
+  }
+
+  .dropdown-content {
+    font-size: x-large;
+  }
+
+  .dropdownItem {
+    font-size: xx-large;
   }
 }

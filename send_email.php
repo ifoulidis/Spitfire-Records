@@ -1,26 +1,20 @@
 <?php
 // Function to send email to the customer
-function sendEmailToCustomer($emailAddress)
+function sendEmail($emailAddress, $info)
 {
   $to = $emailAddress;
   $subject = 'Payment Confirmation';
-  $message = 'Thank you for your payment.';
+  $message = $info;
   $headers = 'From: admin@spitfirerecords.co.nz' . "\r\n" .
     'Reply-To: admin@spitfirerecords.co.nz' . "\r\n" .
     'X-Mailer: PHP/' . phpversion();
 
   if (mail($to, $subject, $message, $headers)) {
-    echo 'Email sent successfully.';
+    echo '<script>console.log("Email sent successfully.")</script>';
   } else {
-    echo 'Email could not be sent.';
+    echo '<script>console.log("Email could not be sent.")</script>';
   }
 }
-
-// Get the email address from the AJAX request
-$emailAddress = $_POST['email'];
-
-// Call the sendEmailToCustomer function
-sendEmailToCustomer($emailAddress);
 
 
 // //Version using PHPMailer

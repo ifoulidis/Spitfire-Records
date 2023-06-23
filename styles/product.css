@@ -1,10 +1,7 @@
-main {
-  background-color: #f1f1f1;
-}
-
 .productDetails__container {
   max-width: 1000px;
   margin: 20px auto;
+  margin-top: 5em;
   background-color: #fff;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -96,6 +93,7 @@ hr {
   display: flex;
   flex-direction: column;
   align-items: flex-end;
+  flex-grow: 1;
 }
 
 .productDetails__bottom {
@@ -110,27 +108,69 @@ hr {
   font-size: 32px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.productDetails__right .hintArea {
+  display: flex;
+  align-items: center;
 }
 
-td {
-  padding: 10px;
-}
-
-td:first-child {
+.hintArea .discogsHintText {
   width: 120px;
+  color: black;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  z-index: 2;
+  border: solid 1px black;
+  position: relative;
+  left: 10%;
+  top: 20px;
+}
+
+/* Styles for table headers */
+.productDetails__right .productDetails__line h2 {
+  margin-right: 10px;
+  font-size: 16px;
   font-weight: bold;
-  vertical-align: top;
 }
 
-td:last-child {
-  text-align: left;
+/* Styles for table cells */
+.productDetails__right .productDetails__line p {
+  margin: 0;
 }
 
-td[rowspan] {
-  vertical-align: top;
+.productDetails__right .productDetails__line {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Styles for track listing link */
+.productDetails__right .productDetails__tabcontent a {
+  color: #1765ee;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+/* Hover style for track listing link */
+.productDetails__right .productDetails__tabcontent a:hover {
+  color: #0d47a1;
+}
+
+/* Styles for table headers */
+.productDetails__right .productDetails__line h2 {
+  flex-shrink: 0;
+  width: 120px;
+  margin-right: 10px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Styles for table cells */
+.productDetails__right .productDetails__line p {
+  flex-grow: 1;
+  margin: 0;
 }
 
 @media screen and (min-width: 768px) {

@@ -16,10 +16,15 @@ $ip_add = getRealUserIp();
 
 $status = "pending";
 
+if (isset($_GET['token'])) {
+  echo '<script type="text/javascript">alert("Looks like something went wrong! Please try again.")</script>';
+}
+
 if (isset($_POST["email"])) {
   $customer_name = $_POST["name"];
   $_SESSION["customer_name"] = $customer_name;
   $customer_email = $_POST["email"];
+  $_SESSION['email'] = $customer_email;
   $customer_street = $_POST["street"];
   $customer_town = $_POST["town"];
   $customer_zip = $_POST["zip"];
@@ -63,9 +68,8 @@ if (isset($_POST['button'])) {
     "SuccessURL":"http://localhost/SpitfireRecords/payment_complete",
     "FailureURL":"http://localhost/SpitfireRecords/order.php",
     "CancellationURL":"http://localhost/SpitfireRecords/cancel_payment.php",
-    "NotificationURL":"http://localhost/SpitfireRecords/order.php" 
-}';
-    // Make secret before production!
+    "NotificationURL":"http://localhost/SpitfireRecords/nudge.php" 
+    }';
     $auth = base64_encode($POLiSecretKey);
     $header = array();
     $header[] = 'Content-Type: application/json';
@@ -96,7 +100,7 @@ if (isset($_POST['button'])) {
 <div style="display: flex; justify-content: center;">
   <div class="col-75" style="max-width: 600px;">
     <div class="container">
-      <form action="/action_page.php" style="text-align: left;">
+      <form style="text-align: left;">
 
         <div class="row">
           <div class="col-50">

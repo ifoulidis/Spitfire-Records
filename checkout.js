@@ -14,7 +14,6 @@ document
   .querySelector("#payment-form")
   .addEventListener("submit", handleSubmit);
 
-let emailAddress = "";
 // Fetches a payment intent and captures the client secret
 async function initialize() {
   // DO NOT HAVE A '/' IN THE RELATIVE PATH BELOW
@@ -35,22 +34,6 @@ async function initialize() {
   paymentElement.mount("#payment-element");
 }
 
-function sendEmailToCustomer() {
-  const email = emailAddress; // Get the customer's email address
-
-  $.ajax({
-    url: "send_email.php",
-    type: "POST",
-    data: { email: email },
-    success: function (response) {
-      console.log(response);
-    },
-    error: function (xhr, status, error) {
-      console.log(error);
-    },
-  });
-}
-
 async function handleSubmit(e) {
   e.preventDefault();
   setLoading(true);
@@ -60,7 +43,6 @@ async function handleSubmit(e) {
     confirmParams: {
       // Payment completion page
       return_url: "http://localhost/SpitfireRecords/payment_complete.php",
-      receipt_email: emailAddress,
     },
   });
 
@@ -74,9 +56,6 @@ async function handleSubmit(e) {
   } else {
     showMessage("An unexpected error occurred.");
   }
-
-  // Send email to the customer
-  sendEmailToCustomer(); // Call the function here
 
   setLoading(false);
 }

@@ -19,7 +19,7 @@
   margin-bottom: 20px;
 }
 
-h1 {
+.cart__title {
   font-size: 24px;
   margin-bottom: 20px;
 }
@@ -88,7 +88,7 @@ h1 {
 .cart__deleteButton {
   display: inline-block;
   padding: 10px 20px;
-  background-color: red;
+  background-color: #dd300f;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -97,7 +97,7 @@ h1 {
 }
 
 .continueShoppingButton .btn:hover {
-  background-color: #b42e06;
+  background-color: #b8280c;
 }
 
 .pull-left {

@@ -1,4 +1,5 @@
 <?php
+// Not working
 session_start();
 if (!isset($_SESSION['admin_email'])) {
 
@@ -144,7 +145,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="genre2">Genre 2:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="genre2" required><br><br>
+            <input type="text" name="genre2"><br><br>
           </div>
         </div>
 
@@ -153,7 +154,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="genre3">Genre 3:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="genre3" required><br><br>
+            <input type="text" name="genre3"><br><br>
           </div>
         </div>
         <div class="row">

@@ -8,6 +8,7 @@ require_once('secrets.php');
 
 
 $price = $_SESSION['price'];
+$customer_email = $_SESSION['email'];
 
 header('Content-Type: application/json');
 
@@ -17,6 +18,7 @@ try {
   $paymentIntent = \Stripe\PaymentIntent::create([
     'amount' => $price,
     'currency' => 'nzd',
+    'receipt_email' => $customer_email,
     'automatic_payment_methods' => [
       'enabled' => true,
     ],

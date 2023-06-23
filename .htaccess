@@ -1,5 +1,7 @@
 RewriteEngine On
 RewriteRule ^([0-9]+)$ product.php?pro_id=$1 [QSA,NC,L]
+RewriteRule ^([0-9]+)$ filter.php?genre=$1 [QSA,NC,L]
+RewriteRule ^([0-9]+)$ filter.php?format=$1 [QSA,NC,L]
 RewriteRule ^([0-9]+)$ admin/update_product.php?id=$1 [QSA,NC,L]
 
 <FilesMatch "\.(css|png)$">

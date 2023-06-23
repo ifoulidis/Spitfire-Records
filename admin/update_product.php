@@ -1,4 +1,5 @@
 <?php
+// Make image uploading work.
 session_start();
 if (!isset($_SESSION['admin_email'])) {
 
@@ -32,8 +33,6 @@ if (!isset($_SESSION['admin_email'])) {
       $genre1 = $_POST['genre1'];
       $genre2 = $_POST['genre2'];
       $genre3 = $_POST['genre3'];
-      $front_image = $_POST['front_image'];
-      $back_image = $_POST['front_image'];
       $description = $_POST['description'];
       $regular_price = $_POST['regular_price'];
       $new_used = $_POST['new_used'];
@@ -48,9 +47,26 @@ if (!isset($_SESSION['admin_email'])) {
       $record_label = $_POST['record_label'];
       $stock = $_POST['stock'];
 
+      // Sanitize input values
+      $album = mysqli_real_escape_string($con, $album);
+      $artist = mysqli_real_escape_string($con, $artist);
+      $genre1 = mysqli_real_escape_string($con, $genre1);
+      $genre2 = mysqli_real_escape_string($con, $genre2);
+      $genre3 = mysqli_real_escape_string($con, $genre3);
+      $description = mysqli_real_escape_string($con, $description);
+      $new_used = mysqli_real_escape_string($con, $new_used);
+      $media_condition = mysqli_real_escape_string($con, $media_condition);
+      $sleeve_condition = mysqli_real_escape_string($con, $sleeve_condition);
+      $video_link = mysqli_real_escape_string($con, $video_link);
+      $track_listing = mysqli_real_escape_string($con, $track_listing);
+      $format = mysqli_real_escape_string($con, $format);
+      $pressing_country = mysqli_real_escape_string($con, $pressing_country);
+      $record_label = mysqli_real_escape_string($con, $record_label);
+
       // Retrieve other form data here
       $target_dir = "C:\xampp\tmp"; // Change in production
-  
+      $query = "UPDATE products SET album='$album', artist='$artist', `year`=$year, genre1='$genre1', genre2='$genre2', genre3='$genre3', `description`='$description', regular_price=$regular_price, `new/used`='$new_used', `media-condition`='$media_condition', `sleeve/insert condition`='$sleeve_condition', video_link='$video_link', track_listing='$track_listing', format='$format', `number_of_discs/records`=$number_of_discs, `Pressing Year`=$pressing_year, `Pressing Country`='$pressing_country', `Record Label`='$record_label', stock=$stock WHERE id=$id";
+
       // Preparing the update query based on number of images
       if (!empty($_FILES['front_image']['tmp_name']) and !empty($_FILES['back_image']['tmp_name'])) {
         $image1 = $_FILES['front_image']['name'];
@@ -61,19 +77,16 @@ if (!isset($_SESSION['admin_email'])) {
         $stmt = mysqli_prepare($con, $query);
 
         // Binding the parameters
-        mysqli_stmt_bind_param($stmt, 'ssisssbbssisssssiissii', $album, $artist, $year, $genre1, $genre2, $genre3, $imageData, $description, $regular_price, $new_used, $media_condition, $sleeve_condition, $video_link, $track_listing, $format, $number_of_discs, $pressing_year, $pressing_country, $record_label, $stock, $id);
+        mysqli_stmt_bind_param($stmt, 'ssissssssdisssssiissii', $album, $artist, $year, $genre1, $genre2, $genre3, $imageData1, $imageData2, $description, $regular_price, $new_used, $media_condition, $sleeve_condition, $video_link, $track_listing, $format, $number_of_discs, $pressing_year, $pressing_country, $record_label, $stock, $id);
       } elseif (!empty($_FILES['front_image']['tmp_name'])) {
-        if (!$_FILES['front_image']['error'] == "UPLOAD_ERR_OK") {
-          echo !$_FILES['front_image']['error'];
-        } else {
-          $image = $_FILES['front_image']['name'];
-          $imageData = file_get_contents($_FILES['front_image']['tmp_name']);
-          $query = "UPDATE products SET album=?, artist=?, year=?, genre1=?, genre2=?, genre3=?, front_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
-          $stmt = mysqli_prepare($con, $query);
 
-          // Binding the parameters
-          mysqli_stmt_bind_param($stmt, 'ssisssbssisssssiissii', $album, $artist, $year, $genre1, $genre2, $genre3, $imageData, $description, $regular_price, $new_used, $media_condition, $sleeve_condition, $video_link, $track_listing, $format, $number_of_discs, $pressing_year, $pressing_country, $record_label, $stock, $id);
-        }
+        $image = $_FILES['front_image']['name'];
+        $imageData = file_get_contents($_FILES['front_image']['tmp_name']);
+        $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, front_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
+        $stmt = mysqli_prepare($con, $query);
+
+        // Binding the parameters
+        mysqli_stmt_bind_param($stmt, 'ssisssssdisssssiissii', $album, $artist, $year, $genre1, $genre2, $genre3, $imageData, $description, $regular_price, $new_used, $media_condition, $sleeve_condition, $video_link, $track_listing, $format, $number_of_discs, $pressing_year, $pressing_country, $record_label, $stock, $id);
       } else {
         $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
         $stmt = mysqli_prepare($con, $query);
@@ -89,14 +102,6 @@ if (!isset($_SESSION['admin_email'])) {
       } else {
         echo "Error updating product: " . mysqli_error($con);
       }
-
-
-
-      // Close the statement
-      mysqli_stmt_close($stmt);
-
-      // Close the connection
-      mysqli_close($con);
     } else {
       $con = mysqli_connect("localhost", "root", "", "spitfire records");
       // Retrieve the product ID from the query parameter
@@ -113,7 +118,7 @@ if (!isset($_SESSION['admin_email'])) {
       // Display the update form with pre-filled values
       ?>
       <form class='updateForm' action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
-        <input type=" hidden" name="id" value="<?php echo $row['id']; ?>">
+        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
 
         <!-- Add input fields for other product details here -->
 
@@ -158,7 +163,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="genre2">Genre 2:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="genre2" value="<?php echo $row['genre2']; ?>" required><br><br>
+            <input type="text" name="genre2" value="<?php echo $row['genre2']; ?>"><br><br>
           </div>
         </div>
 
@@ -167,7 +172,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="genre3">Genre 3:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="genre3" value="<?php echo $row['genre3']; ?>" required><br><br>
+            <input type="text" name="genre3" value="<?php echo $row['genre3']; ?>"><br><br>
           </div>
         </div>
         <div class="row">
@@ -238,7 +243,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="video_link">Video Link:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="video_link" value="<?php echo $row['video_link']; ?>" required><br><br>
+            <input type="text" name="video_link" value="<?php echo $row['video_link']; ?>"><br><br>
           </div>
         </div>
 
@@ -247,7 +252,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="track_listing">Track Listing:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="track_listing" value="<?php echo $row['track_listing']; ?>" required><br><br>
+            <input type="text" name="track_listing" value="<?php echo $row['track_listing']; ?>"><br><br>
           </div>
         </div>
 
@@ -275,7 +280,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="pressing_year">Pressing Year:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="pressing_year" value="<?php echo $row['Pressing Year']; ?>" required><br><br>
+            <input type="text" name="pressing_year" value="<?php echo $row['Pressing Year']; ?>"><br><br>
           </div>
         </div>
 
@@ -284,7 +289,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="pressing_country">Pressing Country:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="pressing_country" value="<?php echo $row['Pressing Country']; ?>" required><br><br>
+            <input type="text" name="pressing_country" value="<?php echo $row['Pressing Country']; ?>"><br><br>
           </div>
         </div>
 
@@ -293,7 +298,7 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="record_label">Record Label:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="record_label" value="<?php echo $row['Record Label']; ?>" required><br><br>
+            <input type="text" name="record_label" value="<?php echo $row['Record Label']; ?>"><br><br>
           </div>
         </div>
 

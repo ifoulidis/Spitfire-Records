@@ -2,26 +2,39 @@
 session_start();
 include("includes/header.php");
 include("includes/db.php");
+include("send_email.php");
 
 $customer_name = $_SESSION["customer_name"];
 
 $paid = $_SESSION['price'];
-// $products = $_SESSION['products'];
-// echo var_dump($_SESSION['products']);
 
-// foreach ($products as $key => $product) {
-//   $title = $product['title'];
-//   $quantity = $product['quantity'];
-//   // Perform actions using $title and $quantity
-//   // ...
-//   echo "Title = $title<br>";
-//   echo "Quantity = $quantity<br>";
-// }
+$orders = "SELECT * FROM orders WHERE customer_name='$customer_name' and order_status='pending'";
+
+$results = mysqli_query($db, $orders);
+
+$message_body = $customer_name . " has purchased:\n";
+
+while ($row = mysqli_fetch_array($results)) {
+  $product_id = $row['product_id'];
+  $get_products = "SELECT * FROM products WHERE id='$product_id'";
+  $run_products = mysqli_query($db, $get_products);
+
+  while ($row_products = mysqli_fetch_array($run_products)) {
+    $message_body .= $row_products['album'] . ", " . $row_products["artist"] . ", qty = " . $row['qty'] . "\n";
+    echo $row_products['album'] . ", " . $row_products["artist"] . ", qty = " . $row['qty'];
+    echo "<br>";
+  }
+  $message_body .= "\nAddress: " . $row['street'] . ", " . $row['town'] . $row['zip'];
+  $message_body .= "\nPhone: " . $row['phone'];
+}
+
+sendEmail($_SESSION['email'], $message_body);
+
 echo "Paid: $" . $paid / 100;
 
 $query = "update orders set order_status='complete' where customer_name='$customer_name' and order_status='pending'";
 
-$update_orders = mysqli_query($con, $query);
+$update_orders = mysqli_query($db, $query);
 
 ?>
 

@@ -27,7 +27,12 @@ if (!isset($_SESSION['admin_email'])) {
       </a>
       <a href="./update_products.php">
         <div class='card'>
-          <h1>UPDATE PRODUCTS</h1>
+          <h1>SEARCH/UPDATE PRODUCTS</h1>
+        </div>
+      </a>
+      <a href="./orders.php">
+        <div class='card'>
+          <h1>Orders</h1>
         </div>
       </a>
   </body>

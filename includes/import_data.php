@@ -17,7 +17,8 @@ $headers = array_shift($rows);
 
 // Add null strings depending on the number of genres
 foreach ($rows as $row) {
-  $row[3] = str_replace('/', ', ', $row[3]);
+  $row[3] = preg_replace('/([a-zA-Z])\/([a-zA-Z])/', '$1, $2', $row[3]);
+  ;
   $genres = explode(', ', $row[3]);
   if (count($genres) == 1) {
     $genres[] = null;
@@ -29,6 +30,7 @@ foreach ($rows as $row) {
   // Clean data
   foreach ($row as $x => $value) {
     $row[$x] = str_replace('"', "", $row[$x]);
+    $row[$x] = str_replace('12 Vinyl', '12" Vinyl', $row[$x]);
     $row[$x] = str_replace("'", "", $row[$x]);
   }
   $row[5] = str_replace('$', "", $row[5]);
