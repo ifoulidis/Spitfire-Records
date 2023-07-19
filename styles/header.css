@@ -26,12 +26,12 @@ header {
   z-index: 1;
   top: 0;
   left: 0;
-  background-color: white;
+  background-color: black;
   overflow-x: hidden;
   overflow-y: visible;
-  transition: 0.5s;
+  transition: 0.2s;
   padding-top: 60px;
-  color: rgb(120, 120, 120);
+  color: white;
   font-size: x-large;
 }
 
@@ -39,7 +39,7 @@ header {
   padding: 8px 8px 8px 8px;
   text-decoration: none;
   font-size: 25px;
-  color: rgb(120, 120, 120);
+  color: white;
   display: block;
   transition: 0.3s;
   font-size: 2em;
@@ -47,11 +47,11 @@ header {
 
 .sidenav a:visited {
   text-decoration: none;
-  color: rgb(120, 120, 120);
+  color: white;
 }
 .sidenav a:active {
   text-decoration: none;
-  color: rgb(120, 120, 120);
+  color: white;
 }
 
 .sidenav div {
@@ -78,7 +78,6 @@ header {
   width: 100%;
   text-align: center;
   margin: 0;
-  vertical-align: top;
 }
 
 .logo {
@@ -201,8 +200,8 @@ header {
 
 @media screen and (max-width: 775px) {
   #main_logo {
-    width: 60px;
-    height: 48px;
+    width: 75px;
+    height: 60px;
   }
   #main_title {
     width: 136.2px;

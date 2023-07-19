@@ -7,7 +7,7 @@ session_start();
 if (!isset($_SESSION['admin_email'])) {
   echo "<script>window.open('log_in.php','_self')</script>";
 } else {
-  $con = mysqli_connect("localhost", "root", "", "spitfire records");
+  include("../includes/db.php");
   $limit = 50; // Number of records per page
 
   // Get the total number of products
@@ -35,20 +35,23 @@ if (!isset($_SESSION['admin_email'])) {
   <html>
 
   <head>
-    <title>Update Products</title>
+    <title>Orders</title>
     <link href="css/admin_style.css" rel="stylesheet">
+    <link href="../styles/style.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   </head>
 
   <body>
-    <h2>Update Products</h2>
-    <h3>Leave fields blank if they need to be empty</h3>
+    <a href="index.php" class="back-button"><i class="fa-solid fa-arrow-left"></i> Back</a>
+    <div class="mainTitle">
+      <h1>Orders</h1>
+    </div>
+
     <table>
       <tr>
         <th>Date</th>
         <th>Product ID</th>
         <th>Qty</th>
-        <th>Fulfillment Status</th>
         <th>Customer Name</th>
         <th>Street</th>
         <th>Town</th>
@@ -57,6 +60,7 @@ if (!isset($_SESSION['admin_email'])) {
         <th>Phone</th>
         <th>Invoice No.</th>
         <th>Order Status</th>
+        <th>Fulfillment Status</th>
         <th>Actions</th>
       </tr>
 
@@ -66,9 +70,8 @@ if (!isset($_SESSION['admin_email'])) {
         echo "<tr>";
         // Create the update link with the product ID as a query parameter
         echo "<td>" . $row['date'] . "</td>";
-        echo "<td>" . $row['product_id'] . "</td>";
+        echo "<td>" . "<button href='../" . $row['product_id'] . "' data-productid='" . $row['product_id'] . "' class='updateLink' target='_blank'>" . $row['product_id'] . "</button></td>";
         echo "<td>" . $row['qty'] . "</td>";
-        echo "<td>" . $row['fulfillment_status'] . "</td>";
         echo "<td>" . $row['customer_name'] . "</td>";
         echo "<td>" . $row['street'] . "</td>";
         echo "<td>" . $row['town'] . "</td>";
@@ -77,11 +80,12 @@ if (!isset($_SESSION['admin_email'])) {
         echo "<td>" . $row['phone'] . "</td>";
         echo "<td>" . $row['invoice_no'] . "</td>";
         echo "<td>" . $row['order_status'] . "</td>";
+        echo "<td>" . $row['fulfillment_status'] . "</td>";
         // A button to change fulfillment_status to 'complete' for each row
-        if ($row['order_status'] == "pending") {
-          echo "<td><button class='markComplete' data-productid='" . $row['id'] . "'>Mark Complete</button></td>";
+        if ($row['fulfillment_status'] == "incomplete") {
+          echo "<td><button class='markComplete' data-orderid='" . $row['id'] . "'>Mark Complete</button></td>";
         } else {
-          echo "<td><button class='markComplete' data-productid='" . $row['id'] . "'>Undo</button></td>";
+          echo "<td><button class='markComplete' data-orderid='" . $row['id'] . "'>Undo</button></td>";
         }
         echo "</tr>";
       }
@@ -92,24 +96,36 @@ if (!isset($_SESSION['admin_email'])) {
 
       <script>
         $(document).ready(function () { // Attach event handler to the Mark Complete buttons         
-          $('.markComplete').click(function () {
+          $('table').on('click', '.markComplete', function () {
             var button = $(this);
-            var productId = $(this).data('productid');
-            var status = $(this).contents();
-            var completion = "incomplete";
-            if (status == "Undo") {
+            var productId = $(this).data('orderid');
+            var status = $(this).text();
+            var completion = "";
+            var row = button.closest('tr');
+            if (status == "Mark Complete") {
               completion = "complete";
             }
+            else {
+              completion = "incomplete";
+            }
+
             var url = "functions/update_fulfillment.php?id=" + productId + "&completion=" + completion;
             // AJAX request to update the fulfillment status           
             $.ajax({
-              url: url, type: 'GET', success: function (response) {  // Reload the page after successful update               
-                button.text(response);
+              url: url, type: 'GET', success: function (rowHTML) {  // Reload the page after successful update               
+                row.replaceWith(rowHTML);
               },
               error: function (xhr, status, error) {  // Handle error case              
                 console.log(error);
               }
             });
+          });
+          $('table').on('click', '.updateLink', function (e) {
+            e.preventDefault();
+            var button = $(this);
+            var productId = $(this).data('productid');
+            var update_url = "https://spitfirerecords.co.nz/admin/update_product.php?id=" + productId + "&return=" + encodeURIComponent(window.location.href);
+            window.location.replace(update_url);
           });
         });
       </script>

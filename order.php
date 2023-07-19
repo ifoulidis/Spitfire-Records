@@ -3,14 +3,7 @@
 session_start();
 include("includes/db.php");
 include("includes/header.php");
-
-require_once realpath(__DIR__ . "/vendor/autoload.php");
-use Dotenv\Dotenv;
-
-$dotenv = Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-
-$POLiSecretKey = $_ENV['POLiSecretKey'];
+include("send_email.php");
 
 $ip_add = getRealUserIp();
 
@@ -29,157 +22,313 @@ if (isset($_POST["email"])) {
   $customer_town = $_POST["town"];
   $customer_zip = $_POST["zip"];
   $customer_phone = $_POST["phone"];
+  $shipping_type = $_POST["shipping_type"];
+  $_SESSION['shipping_method'] = $shipping_type;
 
-  $invoice_no = mt_rand();
+  $invoice_no = mt_rand(1, 100000);
 
   $select_cart = "select * from cart where ip_add='$ip_add'";
 
-  $run_cart = mysqli_query($con, $select_cart);
+  $run_cart = mysqli_query($db, $select_cart);
 
+  $shipping = 0;
+  $is_vinyl = 0;
+  $price_before_shipping = 0;
 
   while ($row_cart = mysqli_fetch_array($run_cart)) {
 
-    $pro_id = $row_cart['p_id'];
 
+    $pro_id = $row_cart['p_id'];
+    $pro_price = $row_cart['p_price'];
     $pro_qty = $row_cart['qty'];
 
-    $sub_total = $row_cart['p_price'] * $pro_qty;
+    $select_product = "select * from products where id='$pro_id'";
+    $price_before_shipping += ($pro_price * $pro_qty) * 100;
 
-    $insert_pending_order = "insert into orders (customer_name,street,town,zip,email,phone,invoice_no,product_id,qty,order_status,fulfillment_status,date) values ('$customer_name','$customer_street','$customer_town','$customer_zip','$customer_email','$customer_phone','$invoice_no','$pro_id','$pro_qty','$status','incomplete',NOW())";
+    $run_product_find = mysqli_query($db, $select_product);
+
+    while ($product_found = mysqli_fetch_array($run_product_find)) {
+      if ($product_found['format'] === "Vinyl LP" || $product_found['format'] === '7" Vinyl') {
+        $is_vinyl = 1;
+      }
+    }
+
+    // Add to orders table
+    // The statement checks whether the same order already exists for this customer.
+    // If it does, it is simply updated date-wise.
+    // Otherwise, the order is added to the table.
+    // Assuming you have already established a database connection and assigned it to the $con variable
+
+    $insert_pending_order = "INSERT INTO orders (customer_name, street, town, zip, email, phone, invoice_no, product_id, qty, order_status, fulfillment_status, date)
+      SELECT '$customer_name', '$customer_street', '$customer_town', '$customer_zip', '$customer_email', '$customer_phone', '$invoice_no', '$pro_id', '$pro_qty', '$status', 'incomplete', NOW()
+      WHERE NOT EXISTS (
+          SELECT 1 FROM orders WHERE customer_name = '$customer_name' AND product_id = $pro_id)
+      ON DUPLICATE KEY UPDATE date = NOW()";
 
     $run_pending_order = mysqli_query($con, $insert_pending_order);
+    if ($run_pending_order === false) {
+      // An error occurred
+      $error_message = mysqli_error($con);
+      echo "<script>console.log('There was an error with your order. Please contact us!' );</script>";
+    }
 
-    $delete_cart = "delete from cart where ip_add='$ip_add'";
-
-    $run_delete = mysqli_query($con, $delete_cart);
   }
 
-}
+  if ($shipping_type === "urban" and $is_vinyl === 0) {
+    $shipping = 600;
+  } else if ($shipping_type === "rural" and $is_vinyl === 0) {
+    $shipping = 1150;
+  } else if ($shipping_type === "urban" and $is_vinyl === 1) {
+    $shipping = 1200;
+  } else if ($shipping_type === "rural" and $is_vinyl === 1) {
+    $shipping = 1750;
+  } else if ($shipping_type === "pickup") {
+    $shipping = 0;
+  } else {
+    $owner_message = "Shipping type was somehow not detected for " . $customer_name . ". Please contact via " . $customer_email . " if order was completed.";
+    sendEmail("spitfirerecordsnz@gmail.com", $owner_message);
+  }
 
-if (isset($_POST['button'])) {
-  if ($_POST['button'] == "PayStipe") {
-    //
-  } elseif ($_POST['button'] == "PayPOLi") {
-    $json_builder = '{
-    "Amount":' . $_SESSION["price"] / 100 . ',
-    "CurrencyCode":"NZD",
-    "MerchantReference":' . $invoice_no . ',
-    "MerchantHomepageURL":"http://localhost/SpitfireRecords/",
-    "SuccessURL":"http://localhost/SpitfireRecords/payment_complete",
-    "FailureURL":"http://localhost/SpitfireRecords/order.php",
-    "CancellationURL":"http://localhost/SpitfireRecords/cancel_payment.php",
-    "NotificationURL":"http://localhost/SpitfireRecords/nudge.php" 
-    }';
-    $auth = base64_encode($POLiSecretKey);
-    $header = array();
-    $header[] = 'Content-Type: application/json';
-    $header[] = 'Authorization: Basic ' . $auth;
 
-    $ch = curl_init("https://poliapi.apac.paywithpoli.com/api/v2/Transaction/Initiate");
-    //See the cURL documentation for more information: http://curl.haxx.se/docs/sslcerts.html
-//We recommend using this bundle: https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt
-    curl_setopt($ch, CURLOPT_CAINFO, "ca-bundle.crt");
-    curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_TLSv1_2);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_builder);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    $response = curl_exec($ch);
-    curl_close($ch);
+  $_SESSION['shipping_cost'] = $shipping;
+  $total_price = ($price_before_shipping + $shipping);
+  $_SESSION['price'] = $total_price;
 
-    $json = json_decode($response, true);
 
-    header('Location: ' . $json["NavigateURL"]);
+  if (isset($_POST['button'])) {
+    if ($_POST['button'] == "PayStripe") {
+      $_SESSION['payment_type'] = "Stripe";
+    } elseif ($_POST['button'] == "Bank") {
+      $_SESSION['payment_type'] = "Bank";
+    }
   }
 }
 
 ?>
 
-<div style="display: flex; justify-content: center;">
-  <div class="col-75" style="max-width: 600px;">
-    <div class="container">
-      <form style="text-align: left;">
+<main>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
 
-        <div class="row">
-          <div class="col-50">
-            <h3 style="text-align: center;">Customer Information</h3>
-            <label for="fname"><i class="fa fa-user"></i> Full Name</label>
-            <input type="text" id="fname" name="fullname" placeholder="John M. Doe" required>
-            <label for="email"><i class="fa fa-envelope"></i> Email</label>
-            <input type="email" id="email" name="email" placeholder="john@example.com" required>
-            <label for="street"><i class="fa fa-address-card-o"></i> Street</label>
-            <input type="text" id="street" name="street" placeholder="2 Simple Street" required>
-            <label for="phone"><i class="fa fa-address-card-o"></i> Phone</label>
-            <input type="phone" id="phone" name="phone" required>
+    .orders__checkout-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f2f2f2;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
 
-            <div class="row">
-              <div class="col-50">
-                <label for="town">City or Town</label>
-                <input type="text" id="town" name="town" placeholder="Auckland" required>
-              </div>
-              <div class="col-50">
-                <label for="zip">Zip</label>
-                <input type="number" id="zip" name="zip" placeholder="10001" required>
-              </div>
+    .orders__column {
+      display: flex;
+      justify-content: center;
+    }
+
+    .orders__heading {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .orders__label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .orders__input {
+      width: 90%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      margin-bottom: 7px;
+    }
+
+    #fname,
+    #email,
+    #phone {
+      border-radius: 4px;
+    }
+
+    #town {
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+
+    #zip {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+
+    .orders__row {
+      display: flex;
+      width: 90%;
+      justify-content: space-between;
+    }
+
+    .orders__btn {
+      margin: 4px;
+      display: inline-block;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #ff0000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .orders__btn:hover {
+      background-color: #a00000;
+    }
+
+    .checkout__buttons {
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+  </style>
+  <div class="orders__checkout-container">
+    <form id="orderForm">
+      <div class="orders__column">
+        <div class="orders__col-50">
+          <h3 class="orders__heading">Customer Information</h3>
+          <label class="orders__label" for="fname">Full Name</label>
+          <input type="text" id="fname" name="fullname" placeholder="John M. Doe" required class="orders__input">
+          <label class="orders__label" for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="john@example.com" required class="orders__input">
+          <label class="orders__label" for="phone">Phone</label>
+          <input type="phone" id="phone" placeholder="02100000000" name="phone" required class="orders__input">
+          <label class="orders__label" for="street">Street</label>
+          <input type="text" id="street" name="street" placeholder="2 Simple Street" required class="orders__input">
+
+          <div class="orders__row">
+            <div class="orders__col-50">
+              <label class="orders__label" for="town">City or Town</label>
+              <input type="text" id="town" name="town" placeholder="Auckland" required class="orders__input">
+            </div>
+            <div class="orders__col-50">
+              <label class="orders__label" for="zip">Zip</label>
+              <input type="number" id="zip" name="zip" placeholder="10001" required class="orders__input">
+            </div>
+          </div>
+          <div class="orders__row">
+            <div class="orders__location">
+              <label>
+                <input type="radio" name="location" value="urban" required> Urban
+              </label>
+            </div>
+            <div class="orders__location-50">
+              <label>
+                <input type="radio" name="location" value="rural" required> Rural
+              </label>
+            </div>
+            <div class="orders__location-50">
+              <label>
+                <input type="radio" name="location" value="pickup" required> Pick Up
+              </label>
             </div>
           </div>
         </div>
-        <div style="text-align: center; margin-top: 20px;">
-          <input type="submit" value="Pay With Stripe" id="PayStripe" class="btn">
-          <input type="submit" value="Pay With POLi" id="PayPOLi" class="btn">
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="checkout__buttons">
+        <input type="submit" value="Pay With Stripe" id="PayStripe" title="Coming soon!" class="orders__btn">
+        <input type="submit" value="Bank Transfer" title="Coming soon!" id="Bank" class="orders__btn">
+      </div>
+    </form>
   </div>
-</div>
+</main>
+
+</body>
 
 <script>
   $(document).ready(function () {
     $('#PayStripe').click(function (event) {
-      event.preventDefault(); // Prevent the default form submission
+      // Need to prevent default submission AND check validity:
+      let isFormValid = $('#orderForm')[0].reportValidity(); // Use reportValidity() instead of checkValidity()
+      if (!isFormValid) {
+        event.preventDefault();
+      } else {
+        event.preventDefault(); // Prevent the default form submission
 
-      var formData = {
-        button: this.id,
-        name: $("#fname").val(),
-        email: $("#email").val(),
-        phone: $("#phone").val(),
-        street: $("#street").val(),
-        town: $("#town").val(),
-        zip: $("#zip").val()
-      };
+        var formData = {
+          button: this.id,
+          name: $("#fname").val(),
+          email: $("#email").val(),
+          phone: $("#phone").val(),
+          street: $("#street").val(),
+          town: $("#town").val(),
+          zip: $("#zip").val(),
+          shipping_type: $('input[name="location"]:checked').val()
+        };
 
-      $.ajax({
-        url: window.location.href, // Send the request to the current page URL
-        type: 'POST',
-        data: formData,
-        success: function (response) {
-          // Handle the response from PHP
-          console.log(response);
-          window.location.href = 'Stripe_checkout.php'; // Navigate to Stripe_checkout.php after successful response
-        },
-        error: function (xhr, status, error) {
-          // Handle errors
-          console.log(error);
-        }
-      });
+        $.ajax({
+          url: window.location.href, // Send the request to the current page URL
+          type: 'POST',
+          data: formData,
+          success: function (response) {
+            if (response.includes('alert(')) {
+              // Create a new div for the alert
+              var $alert = $('<div class="alert">' + response + '</div>');
+
+              // Append the alert to the body
+              $('body').append($alert);
+
+              // Add a click event to close the alert
+              $alert.on('click', function () {
+                $(this).remove();
+              });
+            }
+            // Handle the response from PHP
+            window.location.href = 'stripe_checkout.php'; // Navigate to stripe_checkout.php after successful response
+          },
+          error: function (xhr, status, error) {
+            // Handle errors
+            console.log(error);
+          }
+        });
+      }
     });
 
-    $('#PayPOLi').click(function () {
-      $.ajax({
-        url: 'order.php',
-        type: 'POST',
-        data: formData,
-        success: function (response) {
-          // Handle the response from PHP
-          console.log(response);
-        },
-        error: function (xhr, status, error) {
-          // Handle errors
-          console.log(error);
-        }
-      });
+    $('#Bank').click(function () {
+      // Need to prevent default submission AND check validity:
+      let isFormValid = $('#orderForm')[0].reportValidity(); // Use reportValidity() instead of checkValidity()
+      if (!isFormValid) {
+        event.preventDefault();
+      } else {
+        event.preventDefault(); // Prevent the default form submission
+
+        var formData = {
+          button: this.id,
+          name: $("#fname").val(),
+          email: $("#email").val(),
+          phone: $("#phone").val(),
+          street: $("#street").val(),
+          town: $("#town").val(),
+          zip: $("#zip").val(),
+          shipping_type: $('input[name="location"]:checked').val()
+        };
+
+        $.ajax({
+          url: 'order.php',
+          type: 'POST',
+          data: formData,
+          success: function () {
+            // Handle the response from PHP
+            window.location.href = 'payment_complete.php'; // Navigate to stripe_checkout.php after successful response
+          },
+          error: function (xhr, status, error) {
+            // Handle errors
+            console.log(error);
+          }
+        });
+      }
     });
   });
 </script>
+
+</html>

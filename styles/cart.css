@@ -63,7 +63,7 @@
 }
 
 .quantitySelector {
-  width: 70px;
+  width: fit-content;
 }
 
 .subtotal-container {
@@ -82,6 +82,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .continueShoppingButton .btn,

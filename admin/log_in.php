@@ -9,43 +9,34 @@ include("../includes/db.php");
 <html>
 
 <head>
-
   <title>Admin Login</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/bootstrap.min.css">
-
   <link rel="stylesheet" href="css/login.css">
-
+  <style>
+    body {
+      padding-top: 40px;
+    }
+  </style>
 </head>
 
 <body>
-
   <div class="container"><!-- container Starts -->
-
     <form class="form-login" action="" method="post"><!-- form-login Starts -->
-
       <h2 class="form-login-heading">Admin Login</h2>
-
-      <input type="text" class="form-control" name="admin_email" placeholder="Email Address" required>
-
-      <input type="password" class="form-control" name="admin_pass" placeholder="Password" required>
-
-      <button class="btn btn-lg btn-dark btn-block" type="submit" name="admin_login">
-
-        Log in
-
-      </button>
-
-
+      <div class="form-group">
+        <input type="text" class="form-control" name="admin_email" placeholder="Email Address" required>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="admin_pass" placeholder="Password" required>
+      </div>
+      <button class="btn btn-lg btn-dark btn-block" type="submit" name="admin_login">Log in</button>
     </form><!-- form-login Ends -->
-
   </div><!-- container Ends -->
-
-
-
 </body>
 
 </html>
+
 
 <?php
 
@@ -67,7 +58,7 @@ if (isset($_POST['admin_login'])) {
 
     echo "<script>alert('You are Logged in into admin panel')</script>";
 
-    echo "<script>window.open('dashboard.php','_self')</script>";
+    echo "<script>window.open('index.php','_self')</script>";
 
   } else {
 

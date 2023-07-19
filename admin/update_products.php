@@ -6,28 +6,14 @@ session_start();
 if (!isset($_SESSION['admin_email'])) {
   echo "<script>window.open('log_in.php','_self')</script>";
 } else {
-  $con = mysqli_connect("localhost", "root", "", "spitfire records");
-  $limit = 50; // Number of records per page
+  include("../includes/db.php");
 
-  // Get the total number of products
-  $total_query = "SELECT COUNT(*) as total FROM products";
-  $total_result = mysqli_query($con, $total_query);
-  $total_row = mysqli_fetch_assoc($total_result);
-  $total_products = $total_row['total'];
-
-  // Calculate the total number of pages
-  $total_pages = ceil($total_products / $limit);
-
-  // Get the current page number from the URL query parameter
-  $current_page = isset($_GET['page']) ? $_GET['page'] : 1;
-
-  // Calculate the offset for the SQL query
-  $offset = ($current_page - 1) * $limit;
-
-  // Retrieve products with pagination
-  $query = "SELECT * FROM products LIMIT $limit OFFSET $offset";
-  $result = mysqli_query($con, $query);
-
+  $genraQuery = "SELECT DISTINCT genre1 FROM products WHERE stock > 0
+UNION SELECT DISTINCT genre2 FROM products WHERE stock > 0
+UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
+  global $con;
+  $searchResults = mysqli_query($con, $genraQuery);
+  $list = [];
   ?>
 
   <!DOCTYPE html>
@@ -35,64 +21,340 @@ if (!isset($_SESSION['admin_email'])) {
 
   <head>
     <title>Update Products</title>
+    <link href="../styles/style-v2.css" rel="stylesheet">
     <link href="css/admin_style.css" rel="stylesheet">
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Handlee|Roboto:wght@100,400|Courgette|Bruno+Ace|New+Rocker|Space+Grotesk:400,700|Montserrat:400,700|Roboto&display=swap"
+      rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
   </head>
 
   <body>
-    <h2>Update Products</h2>
-    <h3>Leave fields blank if they need to be empty</h3>
-    <table>
-      <tr>
-        <th>Update</th>
-        <th>Product ID</th>
-        <th>Album</th>
-        <th>Artist</th>
-        <th>Price</th>
-        <th>Media Condition</th>
-        <th>Sleeve/Insert Condition</th>
-        <th>Format</th>
-        <th>Pressing Year</th>
-        <th>Stock</th>
-        <th>Remove</th>
-      </tr>
+    <a href="index.php" class="back-button"><i class="fa-solid fa-arrow-left"></i> Back</a>
+    <div class="mainTitle">
+      <h1>Update Products</h1>
+    </div>
+    <div id="filterModal" class="modal">
+      <div class="modal-content">
+        <h2>Filter Options</h2>
 
-      <?php
-      // Display the products in a table
-      while ($row = mysqli_fetch_assoc($result)) {
-        echo "<tr>";
-        // Create the update link with the product ID as a query parameter
-        echo "<td><a class='updateLink' href='update_product.php?id=" . $row['id'] . "'>Update</a></td>";
-        echo "<td>" . $row['id'] . "</td>";
-        echo "<td>" . $row['album'] . "</td>";
-        echo "<td>" . $row['artist'] . "</td>";
-        echo "<td>" . $row['regular_price'] . "</td>";
-        echo "<td>" . $row['media-condition'] . "</td>";
-        echo "<td>" . $row['sleeve/insert condition'] . "</td>";
-        echo "<td>" . $row['Pressing Year'] . "</td>";
-        echo "<td>" . $row['format'] . "</td>";
-        echo "<td>" . $row['stock'] . "</td>";
-        // Fix this button's functionality.
-        echo "<td><button class='updateLink' href='update_product.php?id=" . $row['id'] . "'>Update</button></td>";
-        // Display more columns for other product details
-        echo "</tr>";
-      }
-
-      // Close the connection
-      mysqli_close($con);
-      ?>
-    </table>
-
-    <!-- Pagination links -->
-    <div class="pagination">
-      <?php
-      // Generate pagination links
-      for ($page = 1; $page <= $total_pages; $page++) {
-        echo "<a href='update_products.php?page=$page'>$page</a>";
-      }
-      ?>
+        <div class="modal-section">
+          <h3>Genres</h3>
+          <div class="genreContainer">
+            <a href="#" class="genreButton active" data-genre="all">All</a>
+            <?php
+            while ($sortedGenre = mysqli_fetch_array($searchResults)) {
+              $genreValue = $sortedGenre[0];
+              if ($genreValue !== 'null') {
+                $list[] = $genreValue;
+              }
+            }
+            sort($list);
+            foreach ($list as $item) {
+              echo "<a href='#' class='genreButton' data-genre='$item'>$item</a>";
+            }
+            ?>
+          </div>
+        </div>
+        <div class="modal-section">
+          <h3>Formats</h3>
+          <div class="formatContainer">
+            <a href="#" id="All" class="formatButton active" data-format="all">All</a>
+            <a href="#" id="CDs" class="formatButton" data-format="CD">CDs</a>
+            <a href="#" id="Vinyl LP" class="formatButton" data-format='Vinyl LP'>Vinyl LP</a>
+            <a href="#" id="7 Inch Vinyl" class="formatButton" data-format='7 Inch Vinyl'>7&quot; Vinyl</a>
+          </div>
+        </div>
+        <div class="modal-section">
+          <h3>Condition</h3>
+          <div class="conditionContainer">
+            <label><input type="radio" name="condition" value="all" checked>All</label>
+            <label><input type="radio" name="condition" value="new">New</label>
+            <label><input type="radio" name="condition" value="used">Used</label>
+          </div>
+        </div>
+        <div class="modal-section">
+          <button id="applyFilters">Apply Filters</button>
+          <button id="resetFilters">Reset Filters</button>
+        </div>
+      </div>
     </div>
 
+    <div class="searchLine">
+      <form id="searchForm" class="searchbar" method="POST">
+        <input type="search" id="searchbox" placeholder="Search for artist or album..." name="searchQuery">
+        <button class="search" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+      </form>
+      <a href="#" class="filter_button active">Filter</a>
+      <button id="clearFilters">Clear Filters</button>
+    </div>
+    <table>
+      <div class="bars-1"></div>
+    </table>
+
+
+    <!-- Pagination links -->
+    <div class="center">
+      <div class="home__paginator">
+        <button id="prevPage">❮</button>
+        <button id="nextPage">❯</button>
+      </div>
+    </div>
   </body>
+
+  <script>
+    $(document).ready(function () {
+      $('table').on('click', '.deleteProduct', function (e) {
+        e.preventDefault();
+        var button = $(this);
+        var productId = $(this).data('productid');
+        var status = $(this).contents();
+
+        var delete_url = "functions/delete_product.php?id=" + productId;
+        // AJAX request to update the fulfillment status           
+        $.ajax({
+          url: delete_url, type: 'GET', success: function (response) {  // Reload the page after successful update               
+            $("table").load(location.href + " table");
+          },
+          error: function (xhr, status, error) {  // Handle error case              
+            console.log(error);
+          }
+        });
+      });
+
+      $('table').on('click', '.updateLink', function (e) {
+        e.preventDefault();
+        var button = $(this);
+        var productId = $(this).data('productid');
+        var update_url = "https://spitfirerecords.co.nz/admin/update_product.php?id=" + productId + "&return=" + encodeURIComponent(window.location.href);
+        window.location.replace(update_url);
+      });
+
+
+      function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+      }
+
+
+      var format = getParameterByName('format') || 'all';
+      var searchQuery = getParameterByName('genre') || "";
+      var genre = getParameterByName('genre') || 'all';
+      var condition = getParameterByName('condition') || "all";
+      var offset = Number((getParameterByName('offset'))) || 0;
+      var gridItemsCount = $(".grid-container .product").length;
+
+      $("#searchbox").on("input", function () {
+        searchQuery = $(this).val(); // Update the variable with the input value
+      });
+
+
+      function updatePageButtons() {
+        console.log(gridItemsCount);
+        if (gridItemsCount === 16) {
+          $('#nextPage').removeClass('disabled');
+        }
+        else {
+          $('#nextPage').addClass('disabled');
+        }
+        if (offset === 0) {
+          $('#prevPage').addClass('disabled');
+        }
+        else {
+          $('#prevPage').removeClass('disabled');
+        }
+      }
+
+      function addQueryParamsToURL() {
+        var url = window.location.href;
+
+        // Parse the existing query parameters
+        var urlParts = url.split('?');
+        var baseUrl = urlParts[0];
+        var queryParams = urlParts[1] ? urlParts[1].split('&') : [];
+
+        // Update or remove existing query parameters
+        queryParams = queryParams.filter(function (param) {
+          return !param.startsWith('format=') && !param.startsWith('searchQuery=') && !param.startsWith('genre=') && !param.startsWith('condition=') && !param.startsWith('offset=');
+        });
+
+        // Add the new query parameters
+        if (format) queryParams.push('format=' + encodeURIComponent(format));
+        if (searchQuery) queryParams.push('searchQuery=' + encodeURIComponent(searchQuery));
+        if (genre) queryParams.push('genre=' + encodeURIComponent(genre));
+        if (condition) queryParams.push('condition=' + encodeURIComponent(condition));
+        if (offset) queryParams.push('offset=' + encodeURIComponent(offset));
+
+        // Combine the base URL and updated query parameters
+        var newUrl = baseUrl;
+        if (queryParams.length > 0) {
+          newUrl += '?' + queryParams.join('&');
+        }
+
+        // Modify the URL using pushState
+        history.pushState(null, '', newUrl);
+      }
+
+
+      function getProducts() {
+        data = {
+          'action': 'getProducts',
+          'offset_increment': offset,
+          'search_query': searchQuery,
+          'genre_option': genre,
+          'condition': condition,
+          'format_option': format,
+          'url': window.location.href
+        };
+        console.log(data);
+        $('.bars-1').show();
+        $.post('functions/get_products.php', data, function (response) {
+          if (response.trim() === '') {
+            if (offset > 0) {
+              $('#nextPage').addClass('disabled');
+              addQueryParamsToURL();
+            } else {
+              $("table").html("<p>No results found!</p>");
+              updatePageButtons();
+            }
+          } else {
+            $('.bars-1').hide();
+            $("table").html(response);
+            gridItemsCount = $("table tr").length;
+            updatePageButtons();
+            addQueryParamsToURL();
+          }
+        });
+      }
+
+
+
+      // Retrieve products
+      getProducts();
+
+      $("#nextPage").click(function (e) {
+        e.preventDefault();
+        if (gridItemsCount > 0) {
+          offset += 15;
+          getProducts();
+        }
+      });
+
+      $("#prevPage").click(function (e) {
+        e.preventDefault();
+        if (offset !== 0) {
+          offset -= 15;
+          getProducts();
+        }
+        else {
+          $('#prevPage').addClass('disabled');
+        }
+      });
+
+      $("#searchForm input").on('search', function (e) {
+        // Check if the Enter key was pressed (keyCode 13)
+        e.preventDefault();
+        offset = 0;
+        getProducts();
+      });
+
+      $("#searchForm").submit(function (e) {
+        e.preventDefault();
+        offset = 0;
+        getProducts();
+      });
+
+      $(".filter-button").click(function () {
+        $("#filterModal").css("display", "block");
+      });
+
+      $(window).click(function (e) {
+        if (e.target == document.getElementById("filterModal")) {
+          $("#filterModal").css("display", "none");
+        }
+      });
+
+      $("#applyFilters").click(function () {
+        $("#filterModal").css("display", "none");
+        offset = 0;
+        getProducts();
+      });
+
+      function resetFilters() {
+        // Reset Buttons
+        $(".genreButton").removeClass("active");
+        $(".genreButton[data-genre='all']").addClass("active");
+        $('.formatButton').removeClass('active');
+        $(".formatButton[data-format='all']").addClass("active");
+        $("input[name='condition'][value='all']").prop("checked", true);
+        // Reset variables
+        genre = 'all';
+        format = "all";
+        condition = "all";
+        searchQuery = '';
+        $("#filterModal").css("display", "none");
+        getProducts();
+      }
+
+      $("#resetFilters").click(function () {
+        resetFilters();
+      });
+
+      $("#clearFilters").click(function (e) {
+        resetFilters();
+      });
+
+      $("[name='condition']").click(function () {
+        var cond = $("input[name='condition']:checked").val();
+        if (cond == "new") {
+          condition = 0;
+        }
+        else if (cond == "used") {
+          condition = 1;
+        }
+        else {
+          condition = cond;
+        }
+      })
+
+      // Function to activate genre button
+      function activateGenreButton(button) {
+        $('.genreButton').removeClass('active');
+        button.addClass('active');
+      }
+
+      // Function to activate format button
+      function activateFormatButton(button) {
+        $('.formatButton').removeClass('active');
+        button.addClass('active');
+      }
+
+      $('.formatButton').mousedown(function (e) {
+        format = $(this).data('format');
+        console.log(format);
+        activateFormatButton($(this)); // Activate the clicked button
+      });
+
+      $('.modal-section .genreButton').click(function () {
+        genre = $(this).data('genre');
+        activateGenreButton($(this)); // Activate the clicked button
+        console.log(genre);
+      });
+
+    });
+  </script>
+
+
 
   </html>
 

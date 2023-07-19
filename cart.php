@@ -13,7 +13,8 @@ include("includes/header.php");
             <h1 class="cart__title">Shopping Cart</h1>
 
             <?php
-            $ip_add = getRealUserIp();
+            $ip_add = mysqli_real_escape_string($con, getRealUserIp());
+            $out_of_stock = "no";
             $select_cart = "SELECT * FROM cart WHERE ip_add='$ip_add'";
             $run_cart = mysqli_query($con, $select_cart);
             $count = mysqli_num_rows($run_cart);
@@ -36,8 +37,11 @@ include("includes/header.php");
 
                 while ($row_products = mysqli_fetch_array($run_products)) {
                   $product_title = $row_products['album'] . ", " . $row_products['artist'];
-                  $product_img1 = $encodedImage = base64_encode($row_products['front_image']);
+                  $product_img1 = $encodedImage = base64_encode($row_products['large_image']);
                   $pro_stock = $row_products['stock'];
+                  if ($pro_stock <= 0) {
+                    $out_of_stock = "yes";
+                  }
                   $sub_total = $only_price * $pro_qty;
                   $_SESSION['products'][] = array("title" => $product_title, "quantity" => $pro_qty);
                   $total += $sub_total;
@@ -56,7 +60,14 @@ include("includes/header.php");
                       </p>
                       <p>Quantity:
                         <select name="quant" class="quantitySelector" data-product_id="<?php echo $pro_id; ?>">
-                          <?php for ($i = 1; $i <= $pro_stock; $i++) {
+                          <?php
+                          // Checks if the product is out of stock
+                          if ($pro_stock <= 0) {
+
+                            echo "<option style='color: red;' selected disabled>Out of Stock</option>";
+                          }
+                          // Creates options for quantity based on stock
+                          for ($i = 1; $i <= $pro_stock; $i++) {
                             if ($i == $pro_qty) {
                               echo "<option selected value='$i'>$i</option>";
                             } else {
@@ -86,7 +97,7 @@ include("includes/header.php");
         {
           global $con;
           if (isset($_POST['remove'])) {
-            $remove_id = $_POST['remove'];
+            $remove_id = mysqli_escape_string($con, $_POST['remove']);
             $delete_product = "DELETE FROM cart WHERE p_id='$remove_id'";
             $run_delete = mysqli_query($con, $delete_product);
             if ($run_delete) {
@@ -95,18 +106,27 @@ include("includes/header.php");
           }
         }
 
-        echo @$up_cart = update_cart();
+        update_cart();
         ?>
       </div>
       <div class="subtotal-container">
-        <h2>Subtotal: $
+        <h1>Before Shipping: $
           <?php echo $total; ?>
-        </h2>
+        </h1>
         <p class="text-muted">
-          Urban Shipping: $9.99 for up to 4 items.
+          Vinyl - $12.00 Flat Rate Nationwide (Non Rural)
         </p>
         <p class="text-muted">
-          Rural Shipping: $12.99 for up to 4 items.
+          Vinyl - $17.50 Flat Rate Nationwide (Rural)
+        </p>
+        <p class="text-muted">
+          CDs - $6.00 Flat Rate Nationwide (Non Rural)
+        </p>
+        <p class="text-muted">
+          CDs - $11.50 Flat Rate Nationwide (Rural)
+        </p>
+        <p class="text-muted">
+          Free Pickup Near Matamata
         </p>
         <br>
         <br>
@@ -117,7 +137,14 @@ include("includes/header.php");
             </a>
           </div>
           <div class="checkout-btn">
-            <a class="btn btn-success" href="order.php">Continue to Checkout</a>
+            <?php
+            if ($count === 0 or $out_of_stock === "yes") {
+              echo "<script>console.log('" . $count . "')</script>";
+              echo "<a href='#' class='btn btn-success' data-valid='no'>Continue to Checkout</a>";
+            } else {
+              echo "<a href='#' class='btn btn-success' data-valid='yes'>Continue to Checkout</a>";
+            }
+            ?>
           </div>
         </div>
       </div>
@@ -131,19 +158,34 @@ include("includes/footer.php");
 <script src="js/bootstrap.min.js"></script>
 <script>
   $(document).ready(function (data) {
-    $('.quantitySelector').on('change', function () {
-      var optionSelected = $(this).find('option:selected');
+    $('select[name="quant"]').on('change', function () {
       var quantity = $(this).val();
-      var productId = optionSelected.data('product_id');
+      var productId = $(this).data('product_id');
+      console.log(productId)
       if (quantity != '') {
         $.ajax({
           url: "change.php",
-          method: "POST",
+          method: "post",
           data: { id: productId, quantity: quantity },
-          success: function (data) {
-            $("body").load('cart.php');
+          success: function () {
+            // Reload the page to reflect the change in price.
+            location.reload();
+          },
+          error: function (xhr, status, error) {
+            // Handle errors
+            console.log(error);
           }
         });
+      }
+    });
+    $('.btn-success').click(function (e) {
+      e.preventDefault();
+      var isValid = $(this).data('valid');
+      if (isValid === 'yes') {
+        // Navigate to order.php
+        window.location.href = 'order.php';
+      } else {
+        alert("Have you got anything in your cart? Please check all the items in your cart are in stock.")
       }
     });
   });

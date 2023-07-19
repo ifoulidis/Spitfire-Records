@@ -12,7 +12,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles/checkout.css" />
   <script src="https://js.stripe.com/v3/"></script>
-  <script src="checkout.js" defer></script>
+  <script src="checkout-v1.js" defer></script>
 </head>
 
 <body>

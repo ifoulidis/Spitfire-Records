@@ -5,8 +5,8 @@ function sendEmail($emailAddress, $info)
   $to = $emailAddress;
   $subject = 'Payment Confirmation';
   $message = $info;
-  $headers = 'From: admin@spitfirerecords.co.nz' . "\r\n" .
-    'Reply-To: admin@spitfirerecords.co.nz' . "\r\n" .
+  $headers = 'From: spitfirerecordsnz@gmail.com' . "\r\n" .
+    'Reply-To: spitfirerecordsnz@gmail.com' . "\r\n" .
     'X-Mailer: PHP/' . phpversion();
 
   if (mail($to, $subject, $message, $headers)) {
@@ -15,6 +15,7 @@ function sendEmail($emailAddress, $info)
     echo '<script>console.log("Email could not be sent.")</script>';
   }
 }
+
 
 
 // //Version using PHPMailer

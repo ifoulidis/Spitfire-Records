@@ -11,29 +11,31 @@ if (!isset($_SESSION['admin_email'])) {
   <html>
 
   <head>
+
     <title>Update Product</title>
     <link href="css/update.css" rel="stylesheet">
     <link href="css/admin_style.css" rel="stylesheet">
   </head>
 
   <body>
-
+    <a href="<?php echo $_GET['return'] ?>" class="back-button"><i class="fa-solid fa-arrow-left"></i> Back</a>
     <h2>Update Product</h2>
 
     <?php
 
-    $con = mysqli_connect("localhost", "root", "", "spitfire records");
+    $con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
 
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
       // Retrieve form data
       $id = $_POST['id'];
-      $album = $_POST['album'];
+      $return = $_POST['return_url'];
+      $album = htmlspecialchars($_POST['album']);
       $artist = $_POST['artist'];
       $year = $_POST['year'];
       $genre1 = $_POST['genre1'];
       $genre2 = $_POST['genre2'];
       $genre3 = $_POST['genre3'];
-      $description = $_POST['description'];
+      $description = htmlspecialchars($_POST['description']);
       $regular_price = $_POST['regular_price'];
       $new_used = $_POST['new_used'];
       $media_condition = $_POST['media_condition'];
@@ -68,21 +70,21 @@ if (!isset($_SESSION['admin_email'])) {
       $query = "UPDATE products SET album='$album', artist='$artist', `year`=$year, genre1='$genre1', genre2='$genre2', genre3='$genre3', `description`='$description', regular_price=$regular_price, `new/used`='$new_used', `media-condition`='$media_condition', `sleeve/insert condition`='$sleeve_condition', video_link='$video_link', track_listing='$track_listing', format='$format', `number_of_discs/records`=$number_of_discs, `Pressing Year`=$pressing_year, `Pressing Country`='$pressing_country', `Record Label`='$record_label', stock=$stock WHERE id=$id";
 
       // Preparing the update query based on number of images
-      if (!empty($_FILES['front_image']['tmp_name']) and !empty($_FILES['back_image']['tmp_name'])) {
-        $image1 = $_FILES['front_image']['name'];
-        $imageData1 = file_get_contents($_FILES['front_image']['tmp_name']);
-        $image2 = $_FILES['back_image']['name'];
-        $imageData2 = file_get_contents($_FILES['back_image']['tmp_name']);
-        $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, front_image=?, back_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
+      if (!empty($_FILES['large_image']['tmp_name']) and !empty($_FILES['small_image']['tmp_name'])) {
+        $image1 = $_FILES['large_image']['name'];
+        $imageData1 = file_get_contents($_FILES['large_image']['tmp_name']);
+        $image2 = $_FILES['small_image']['name'];
+        $imageData2 = file_get_contents($_FILES['small_image']['tmp_name']);
+        $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, large_image=?, small_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
         $stmt = mysqli_prepare($con, $query);
 
         // Binding the parameters
         mysqli_stmt_bind_param($stmt, 'ssissssssdisssssiissii', $album, $artist, $year, $genre1, $genre2, $genre3, $imageData1, $imageData2, $description, $regular_price, $new_used, $media_condition, $sleeve_condition, $video_link, $track_listing, $format, $number_of_discs, $pressing_year, $pressing_country, $record_label, $stock, $id);
-      } elseif (!empty($_FILES['front_image']['tmp_name'])) {
+      } elseif (!empty($_FILES['large_image']['tmp_name'])) {
 
-        $image = $_FILES['front_image']['name'];
-        $imageData = file_get_contents($_FILES['front_image']['tmp_name']);
-        $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, front_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
+        $image = $_FILES['large_image']['name'];
+        $imageData = file_get_contents($_FILES['large_image']['tmp_name']);
+        $query = "UPDATE products SET album=?, artist=?, `year`=?, genre1=?, genre2=?, genre3=?, large_image=?, `description`=?, regular_price=?, `new/used`=?, `media-condition`=?, `sleeve/insert condition`=?, video_link=?, track_listing=?, format=?, `number_of_discs/records`=?, `Pressing Year`=?, `Pressing Country`=?, `Record Label`=?, stock=? WHERE id=?";
         $stmt = mysqli_prepare($con, $query);
 
         // Binding the parameters
@@ -98,14 +100,15 @@ if (!isset($_SESSION['admin_email'])) {
       // Execute the update statement
       if (mysqli_stmt_execute($stmt)) {
         echo "Product updated successfully.";
-        echo "<a href='update_products.php'>Return To All Products</a>";
+        echo "<a href='" . $return . "'>Return To Products</a>";
       } else {
         echo "Error updating product: " . mysqli_error($con);
       }
     } else {
-      $con = mysqli_connect("localhost", "root", "", "spitfire records");
+      $con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
       // Retrieve the product ID from the query parameter
       $id = $_GET['id'];
+      $return_url = $_GET['return'];
 
       // Retrieve the product information from the database
       $query = "SELECT * FROM products WHERE id=?";
@@ -118,8 +121,6 @@ if (!isset($_SESSION['admin_email'])) {
       // Display the update form with pre-filled values
       ?>
       <form class='updateForm' action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-
         <!-- Add input fields for other product details here -->
 
         <div class="row">
@@ -177,18 +178,18 @@ if (!isset($_SESSION['admin_email'])) {
         </div>
         <div class="row">
           <div class="col-25">
-            <label for="image">Front Image</label>
+            <label for="image">Large Image</label>
           </div>
           <div class="col-75">
-            <input type="file" name="front_image" accept="image/*"><br><br>
+            <input type="file" name="large_image" accept="image/*"><br><br>
           </div>
         </div>
         <div class="row">
           <div class="col-25">
-            <label for="image">Back Image</label>
+            <label for="image">Small Image</label>
           </div>
           <div class="col-75">
-            <input type="file" name="back_image" accept="image/*"><br><br>
+            <input type="file" name="small_image" accept="image/*"><br><br>
           </div>
         </div>
 
@@ -261,13 +262,26 @@ if (!isset($_SESSION['admin_email'])) {
             <label for="format">Format:</label>
           </div>
           <div class="col-75">
-            <input type="text" name="format" value="<?php echo $row['format']; ?>" required><br><br>
+            <select name="format" required>
+              <option value="">Select Format</option>
+              <option value="Vinyl LP" <?php if ($format == 'Vinyl LP')
+                echo 'selected'; ?>>Vinyl LP</option>
+              <option value="CD" <?php if ($format == 'CD')
+                echo 'selected'; ?>>CD</option>
+              <option value="Music DVD" <?php if ($format == 'Music DVD')
+                echo 'selected'; ?>>Music DVD</option>
+              <option value="7 Inch Vinyl" <?php if ($format == '7 Inch Vinyl')
+                echo 'selected'; ?>>7" Vinyl</option>
+              <option value="Cassette" <?php if ($format == 'Cassette')
+                echo 'selected'; ?>>Cassette</option>
+            </select>
+            <br><br>
           </div>
         </div>
 
         <div class="row">
           <div class="col-25">
-            <label for="number_of_discs">Number of Discs/Records:</label>
+            <label for="number_of_discs">No. of Discs/Records:</label>
           </div>
           <div class="col-75">
             <input type="text" name="number_of_discs" value="<?php echo $row['number_of_discs/records']; ?>"
@@ -312,7 +326,7 @@ if (!isset($_SESSION['admin_email'])) {
         </div>
 
         <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-
+        <input type="hidden" name="return_url" value="<?php echo $return_url; ?>">
 
         <input type="submit" value="Update">
       </form>

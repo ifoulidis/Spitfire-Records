@@ -1,10 +1,94 @@
 .footer {
   width: 100%;
+  padding-top: 2em;
+  padding-bottom: 1em;
   text-align: center;
   color: #dd300f;
   font-family: "Bruno Ace", cursive;
+  background-color: black;
+  border-top-left-radius: 5em;
+  border-top-right-radius: 5em;
 }
 
-.admin {
+.facebook > a,
+.contactLink > a,
+.designed > a {
+  padding: 3px;
+}
+
+.facebook,
+.footer__mainDiv {
+  display: flex;
+  align-items: center;
+}
+
+.footer__mainDiv {
+  justify-content: space-around;
+}
+
+.header__seperator1 {
+  color: #dd300f;
+}
+
+.header__seperator2 {
+  color: #1877f2;
+}
+
+.facebook {
+  justify-content: center;
+  color: #1877f2;
+}
+
+.facebook,
+.contactLink,
+.designed {
+  width: 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer__title {
+  color: white;
+}
+
+.contact {
   font-size: large;
+}
+.admin {
+  font-size: x-small;
+  align-self: end;
+}
+
+.header__separatorMobile1,
+.header__separatorMobile2 {
+  display: none;
+}
+
+@media screen and (max-width: 776px) {
+  .footer__mainDiv {
+    flex-direction: column;
+  }
+  .facebook,
+  .contactLink,
+  .designed {
+    width: fit-content;
+  }
+  .facebook {
+    justify-content: center;
+  }
+  .header__seperator1,
+  .header__seperator2 {
+    display: none;
+  }
+  .header__separatorMobile1,
+  .header__separatorMobile2 {
+    display: block;
+    width: 80%;
+    border: solid 1px white;
+    border-style: inset;
+  }
+  .admin {
+    margin-top: 1em;
+  }
 }

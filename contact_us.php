@@ -29,7 +29,7 @@ include("includes/db.php");
 
         // If there are no errors, send the email
         if (empty($errors)) {
-          $to = "isaiahemails@gmail.com"; // Replace with your email address
+          $to = "spitfirerecordsnz@gmail.com"; // Replace with your email address
           $subject = "Contact Form Submission";
           $body = "Name: $name\nEmail: $email\nMessage: $message";
           $headers = "From: $email";
