@@ -24,6 +24,7 @@ if (isset($product["year"])) {
 }
 $price = $product["regular_price"];
 // The image from the database needs to be converted.
+$plainImage = $product['large_image'];
 $encodedImage = base64_encode($product['large_image']);
 if ($product["on_sale"] == 1) {
   $sale_price = $product["sale_price"];
@@ -56,7 +57,7 @@ function convertToEmbedUrl($url)
   return $url; // Return the original URL if "embed" is already present or "v" parameter is not found
 }
 
-if (isset($product["video_link"])) {
+if (isset($product["video_link"]) and $product["video_link"] != "") {
   $video = $product["video_link"];
   $convertedUrl = convertToEmbedUrl($video);
 }
@@ -76,7 +77,54 @@ if ($product["genre2"] != "null") {
 if ($product["genre3"] != "null") {
   $genres .= ", " . $product["genre3"];
 }
-/// ###
+
+// ###############
+// The following attempts to generate an image for sharing, but the image gets stretched, so is not active.
+// Get the dimensions of the original image
+// $dimensions = getimagesizefromstring($plainImage);
+// $originalWidth = $dimensions[0];
+// $originalHeight = $dimensions[1];
+// $targetWidth = 1200;
+// $targetHeight = 630;
+// $targetAspectRatio = 1.91 / 1; // Facebook sharing ratio of 1.91:1
+
+// // Calculate the new dimensions without distorting the image (same as before)
+// if ($originalWidth / $originalHeight > $targetAspectRatio) {
+//   // Image is wider than the target ratio, calculate new height
+//   $newWidth = $originalHeight * $targetAspectRatio;
+//   $newHeight = $originalHeight;
+// } else {
+//   // Image is taller than the target ratio, calculate new width
+//   $newWidth = $originalWidth;
+//   $newHeight = $originalWidth / $targetAspectRatio;
+// }
+
+// // Create a new blank image with the target dimensions
+// $newImage = imagecreatetruecolor($targetWidth, $targetHeight);
+// $backgroundColor = imagecolorallocate($newImage, 255, 255, 255); // White background
+// imagefill($newImage, 0, 0, $backgroundColor);
+
+// // Calculate the position to paste the original image for letterboxing or pillarboxing
+
+// $positionX = ($targetWidth - $newWidth) / 2;
+// $positionY = ($targetHeight - $newHeight) / 2;
+
+// // Copy and resize the original image to the new blank image with letterboxing or pillarboxing
+// $originalImage = imagecreatefromstring($plainImage);
+// imagecopyresampled($newImage, $originalImage, $positionX, $positionY, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+
+
+// $imageFilePath = 'images/products/' . $productID . '.jpg';
+// // Save the manipulated image as a file
+// imagejpeg($newImage, $imageFilePath, 90); // Adjust the path and filename as needed
+
+// // Get the URL of the saved image file
+// $imageURL = 'https://spitfirerecords.co.nz/images/products/' . $productID . '.jpg'; // Replace this with the actual URL of the saved image
+
+// // Free up space
+// imagedestroy($originalImage);
+// imagedestroy($newImage);
+
 ?>
 
 <!DOCTYPE html>
@@ -85,12 +133,14 @@ if ($product["genre3"] != "null") {
 <head>
   <meta charset="utf-8">
   <!-- Meta info tags -->
-  <meta property='og:title' content='<?php $album . ', ' . $album . ' - ' ?>Spitfire Records' />
+  <meta property='og:title' content='<?php echo $album . ', ' . $artist . ' - Spitfire Records'; ?>' />
+
   <!-- Thumbnail image -->
-  <meta property='og:image' content='data:image/jpeg;base64,<?php echo $encodedImage; ?>' />
-  <meta property='og:description' content='NZ&#39;s Home of Hard Rock Records' />
+  <meta property='og:image' content='https://spitfirerecords.co.nz/images/thumbnail_logo.jpeg' />
+  <meta property='og:description'
+    content='<?php $album . ', ' . $album . ' (' . $_POST['format'] . ')' . ' - ' . $price ?>' />
   <meta property='og:url' content='https://spitfirerecords.co.nz/<?php echo $_GET["pro_id"]; ?>' />
-  <meta name="twitter:image" content='data:image/jpeg;base64,<?php echo $encodedImage; ?>'>
+  <meta name="twitter:image" content="https://spitfirerecords.co.nz/images/thumbnail_logo.jpeg">
   <meta property="og:type" content='website' />
   <meta name="description" content='<?php $album . ', ' . $album . ' (' . $_POST['format'] . ')' . ' - ' . $price ?>' />
   <!-- Fonts -->
@@ -381,12 +431,14 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
       </div>
     </div>
     <?php
-    if (isset($product["video_link"])) {
+    if (isset($video)) {
       echo "<div class='productDetails__bottom'>
               <iframe width='560' height='315' src='$convertedUrl' title='YouTube video player' frameborder='0'
                 allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
                 allowfullscreen></iframe>
             </div>";
+    } else {
+      echo "<br><br>";
     }
     ?>
     </div>

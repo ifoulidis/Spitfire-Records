@@ -1,18 +1,20 @@
 <footer class="footer">
   <div class="footer__mainDiv">
-    <div class="facebook">
+    <div class="facebookLink">
       <a href="https://www.facebook.com/profile.php?id=100094223823834" target="_blank"><img src="images/f_logo_58.png"
           width="53" height="53.333" alt="Facebook Logo">
       </a>
-      <a href="https://www.facebook.com/profile.php?id=100094223823834" target="_blank">
+      <a href="https://www.facebook.com/profile.php?id=100094223823834" class="facebook" target="_blank">
         Visit us on Facebook
       </a>
     </div>
     <p class="header__seperator1">|</p>
     <hr class="header__separatorMobile1">
     <div class="designed">
-      <a href="https://ifoulidis.vercel.app/aboutme">
-        <h1 class="footer__title">Created By Isaiah Foulidis</h1>
+      <a href="https://ifoulidis.vercel.app/aboutme" class="designed_link">
+        <h1 class="footer__title"><small>Created By</small>
+          <span>Top of the Hill</span>
+        </h1>
       </a>
 
     </div>
@@ -22,6 +24,6 @@
       <a class="contact" href="/contact_us.php">Contact Us</a>
     </div>
   </div>
-  <a class="admin" href="/admin/log_in.php">Admin</a>
+  <!-- <a class="admin" href="/admin/log_in.php">Admin</a> -->
 
 </footer>

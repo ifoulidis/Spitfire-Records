@@ -34,7 +34,6 @@
   <title>Spitfire Records</title>
   <link href="styles/header-v2.css" rel="stylesheet">
   <link href="styles/style-v3.css" rel="stylesheet">
-  <link href="styles/product-v2.css" rel="stylesheet">
   <link href="styles/cart.css" rel="stylesheet">
   <link href="styles/footer.css" rel="stylesheet">
 

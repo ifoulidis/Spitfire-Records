@@ -261,10 +261,12 @@ p {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
+  margin-bottom: 1em;
 }
 
 .conditionContainer > label {
-  font-size: large;
+  font-size: 1.1em;
+  font-family: "Space Grotesk", sans-serif;
 }
 
 .genreButton,
@@ -281,13 +283,15 @@ p {
   transition: background-color 0.3s ease;
 }
 
-.active {
-  background-color: #ccc;
-}
-
 .genreButton:hover,
 .formatButton:hover {
-  background-color: #ccc;
+  background-color: #797878;
+  color: black;
+}
+
+.active {
+  background-color: #e01f1f;
+  color: white;
 }
 
 /* Contact Form Styles */
@@ -424,7 +428,24 @@ p {
   padding: 5px 10px;
 }
 
+input[type="radio"] {
+  height: 15px;
+  width: 15px;
+
+  background-color: #eee;
+}
+
+input[value="new"],
+input[value="used"] {
+  margin-left: 1em;
+}
+
+.conditionContainer input:checked {
+  background-color: #2196f3;
+}
+
 .applyFiltersContainer {
+  font-size: large;
   padding-left: 20%;
   padding-right: 20%;
   padding-top: 10px;
@@ -435,6 +456,7 @@ p {
 
 #applyFilters,
 #resetFilters {
+  font-size: 1em;
   padding: 5px 10px;
   margin-bottom: 10px;
   width: fit-content;
@@ -443,6 +465,10 @@ p {
   text-decoration: none;
   border-radius: 0.2em;
   color: white;
+}
+
+#applyFilters {
+  margin-right: 0.5em;
 }
 
 #applyFilters:hover,
@@ -644,6 +670,12 @@ p {
     font-size: small;
   }
 
+  .genreButton:hover,
+  .formatButton:hover {
+    background-color: #e01f1f;
+    color: white;
+  }
+
   .searchLine {
     flex-direction: column;
     align-items: center;
@@ -662,6 +694,10 @@ p {
 
   #searchbox {
     max-width: 100%;
+  }
+
+  .modal-content {
+    height: calc(100% - 20px);
   }
 
   .filter-button {

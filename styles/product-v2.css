@@ -1,3 +1,8 @@
+body {
+  background-color: white;
+  margin: 0px;
+}
+
 .productDetails__container {
   max-width: 1000px; /* Adjust the max-width value based on your desired width */
   margin: 0 auto; /* Center the container horizontally */
@@ -126,6 +131,8 @@ hr {
   align-items: center;
   max-width: 100%;
   margin: 2em auto;
+  max-width: fit-content;
+  box-shadow: 0 0 8px black;
 }
 
 .productDetails__bottom > h3 {
@@ -225,24 +232,7 @@ hr {
   justify-content: center;
 }
 
-.genreButton,
-.formatButton {
-  display: inline-block;
-  margin: 5px;
-  padding: 10px 20px;
-  background-color: #e0e0e0;
-  color: #333;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s ease;
-}
-
 .active {
-  background-color: #ccc;
-}
-
-.genreButton:hover,
-.formatButton:hover {
   background-color: #ccc;
 }
 

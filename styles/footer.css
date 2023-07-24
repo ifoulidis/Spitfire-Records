@@ -10,13 +10,14 @@
   border-top-right-radius: 5em;
 }
 
-.facebook > a,
+.facebookLink > a,
 .contactLink > a,
 .designed > a {
   padding: 3px;
+  transition: scale 1s;
 }
 
-.facebook,
+.facebookLink,
 .footer__mainDiv {
   display: flex;
   align-items: center;
@@ -27,19 +28,36 @@
 }
 
 .header__seperator1 {
-  color: #dd300f;
+  color: white;
 }
 
 .header__seperator2 {
-  color: #1877f2;
+  color: white;
 }
 
-.facebook {
+.facebookLink {
   justify-content: center;
   color: #1877f2;
 }
 
-.facebook,
+.facebook:hover,
+.contact:hover {
+  scale: 1.1;
+}
+
+.footer__title {
+  font-size: 1em;
+}
+
+.designed_link {
+  color: white;
+}
+
+.designed_link:hover {
+  color: #03a062;
+}
+
+.facebookLink,
 .contactLink,
 .designed {
   width: 30%;
@@ -48,16 +66,13 @@
   justify-content: center;
 }
 
-.footer__title {
-  color: white;
-}
-
 .contact {
   font-size: large;
 }
 .admin {
   font-size: x-small;
   align-self: end;
+  height: min-content;
 }
 
 .header__separatorMobile1,
@@ -69,12 +84,12 @@
   .footer__mainDiv {
     flex-direction: column;
   }
-  .facebook,
+  .facebookLink,
   .contactLink,
   .designed {
     width: fit-content;
   }
-  .facebook {
+  .facebookLink {
     justify-content: center;
   }
   .header__seperator1,

@@ -44,7 +44,7 @@ $list = [];
             <button id="CDs" class="formatButton" data-format="CD">CDs</button>
             <button id="Vinyl" class="formatButton" data-format='Vinyl LP'>Vinyl</button>
             <button id="DVDs" class="formatButton" data-format='Music DVD'>Music DVDs</button>
-            <button id='7" vinyl' class="formatButton" data-format='7 Inch Vinyl'>7&quot; vinyl</button>
+            <button id='7" vinyl' class="formatButton" data-format='7 Inch Vinyl'>7&quot; Vinyl</button>
             <button id='Cassette' class="formatButton" data-format='Cassette'>Cassettes</button>
           </div>
 
@@ -59,8 +59,8 @@ $list = [];
         </div>
         <div class="modal-section">
           <div class="applyFiltersContainer">
-            <button id="applyFilters">Apply Filters</button>
-            <button id="resetFilters">Reset Filters</button>
+            <button id="applyFilters">Apply</button>
+            <button id="resetFilters">Reset</button>
           </div>
         </div>
       </div>
