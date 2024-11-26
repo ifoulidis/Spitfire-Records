@@ -288,10 +288,10 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
 
             <div class="productDetails__title">
               <h1>
-                <?php echo $album; ?>
+                <?php echo stripslashes($album); ?>
               </h1>
               <h2>
-                <?php echo $artist; ?>
+                <?php echo stripslashes($artist); ?>
               </h2>
             </div>
             <div class="productDetails__line">
@@ -350,7 +350,7 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
               <h2>Description:</h2>
 
               <p class="productDetails__description">
-                <?php echo $description; ?>
+                <?php echo stripslashes($description); ?>
               </p>
 
             </div>
@@ -447,6 +447,34 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
   include('includes/footer.php');
   ?>
 </body>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "Product",
+  "name": "<?php echo $album; ?>",
+  "image": "https://spitfirerecords.co.nz/images/products/<?php echo $productID; ?>.jpg",
+  "description": "<?php echo stripslashes($description); ?>",
+  "brand": {
+    "@type": "Thing",
+    "name": "Spitfire Records"
+  },
+  "offers": {
+    "@type": "Offer",
+    "price": "<?php echo $price; ?>",
+    "priceCurrency": "NZD",
+    "availability": "<?php echo ($pro_stock > 0) ? "InStock" : "OutOfStock"; ?>",
+    "seller": {
+      "@type": "Organization",
+      "name": "Spitfire Records",
+      "url": "https://spitfirerecords.co.nz",
+      "logo": "https://spitfirerecords.co.nz/images/logo.png",
+      "description": "Your description of the organization"
+    }
+  }
+}
+</script>
+
 
 <script>
   $(document).ready(function () {

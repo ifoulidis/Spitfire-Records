@@ -1,6 +1,6 @@
 <?php
 
-$db = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
+$db = mysqli_connect("localhost", "root", "", "spitfire_records");
 
 
 function getProducts($searchstring = "", $genre = "all", $format = "all", $condition = "all", $offset = 0)

@@ -6,6 +6,10 @@ include("includes/header.php");
 
 <main>
   <div id="content">
+    <!-- <div class="sale__banner">
+        <h1>50% off Used CDs</h1>
+        <p>Ends Wednesday the 27th at 11:59 PM</p>
+    </div> -->
     <div class="cart__container">
       <div class="column" id="cart">
         <div class="box">
@@ -15,7 +19,11 @@ include("includes/header.php");
             <?php
             $ip_add = mysqli_real_escape_string($con, getRealUserIp());
             $out_of_stock = "no";
-            $select_cart = "SELECT * FROM cart WHERE ip_add='$ip_add'";
+            // Only select the items present in products
+            $select_cart = "SELECT c.* FROM cart c
+                INNER JOIN products p ON c.p_id = p.id
+                WHERE c.ip_add='$ip_add'";
+
             $run_cart = mysqli_query($con, $select_cart);
             $count = mysqli_num_rows($run_cart);
             ?>
@@ -31,7 +39,7 @@ include("includes/header.php");
               while ($row_cart = mysqli_fetch_array($run_cart)) {
                 $pro_id = $row_cart['p_id'];
                 $pro_qty = $row_cart['qty'];
-                $only_price = $row_cart['p_price'];
+
                 $get_products = "SELECT * FROM products WHERE id='$pro_id'";
                 $run_products = mysqli_query($con, $get_products);
 
@@ -39,11 +47,29 @@ include("includes/header.php");
                   $product_title = $row_products['album'] . ", " . $row_products['artist'];
                   $product_img1 = $encodedImage = base64_encode($row_products['large_image']);
                   $pro_stock = $row_products['stock'];
+                  $only_price = $row_cart['p_price'];
                   if ($pro_stock <= 0) {
                     $out_of_stock = "yes";
                   }
-                  $sub_total = $only_price * $pro_qty;
+                  
                   $_SESSION['products'][] = array("title" => $product_title, "quantity" => $pro_qty);
+                  
+                  // 30% discount on used CDs
+                  $currentDateTime = new DateTime();
+                  $startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
+                  $endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
+                  $priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.7 : 1;
+                  if ($row_products['new/used'] == 1 and $row_products['format'] === "CD") {
+                    $only_price = round($only_price * $priceMultiplier, 2);
+                    $only_price = number_format($only_price, 2, '.', '');
+                    $sub_total = round(($only_price * $pro_qty), 2);
+                    $sub_total = number_format($sub_total, 2, '.', '');
+                  }
+                  else{
+                    $sub_total = $only_price * $pro_qty;
+                  }
+
+
                   $total += $sub_total;
                   ?>
 
@@ -178,6 +204,7 @@ include("includes/footer.php");
         });
       }
     });
+
     $('.btn-success').click(function (e) {
       e.preventDefault();
       var isValid = $(this).data('valid');

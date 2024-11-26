@@ -12,89 +12,48 @@ $list = [];
 ?>
 
 <main>
+  <!-- Discount banner -->
+  <?php
+    // 30% discount on used CDs
+    $currentDateTime = new DateTime();
+    $startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
+    $endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
+    if ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime){
+      echo '  <div class="sale__banner">
+      <h1>30% Off Used CDs</h1>
+      <p>Ends Midnight Sunday</p>
+      </div>
+      <br>'; 
+    }
+  ?>
+
+  <div class="cardBox">
+    <div class="home__card" id="card__shopRecords">
+      <a href="./filter.php?format=Vinyl%20LP">
+        <h1>Shop Vinyl</h1>
+      </a>
+    </div>
+    <div class="home__card" id="card__shopCDs">
+      <a href="./filter.php?format=CD">
+        <h1>Shop CDs</h1>
+      </a>
+    </div>
+    <div class="home__card" id="card__shopMore">
+      <a href="./filter.php">
+        <h1>Shop All</h1>
+      </a>
+    </div>
+  </div>
+  <hr class="home_hr" style="box-shadow: 0 3px 3px black;">
   <div class="home__container">
     <!-- Filter Modal -->
-    <div id="filterModal" class="modal">
-      <div class="modal-content">
-        <h2>Filter Options</h2>
-
-        <div class="modal-section">
-          <h3>Genres</h3>
-          <div class="genreContainer">
-            <button class="genreButton active" data-genre="all">All</button>
-            <?php
-            while ($sortedGenre = mysqli_fetch_array($searchResults)) {
-              $genreValue = $sortedGenre[0];
-              if ($genreValue !== 'null' and $genreValue !== '') {
-                $list[] = $genreValue;
-              }
-            }
-            sort($list);
-            foreach ($list as $item) {
-              echo "<button class='genreButton' data-genre='$item'>$item</button>";
-            }
-            ?>
-          </div>
-
-        </div>
-        <div class="modal-section">
-          <h3>Formats</h3>
-          <div class="formatContainer">
-            <button id="All" class="formatButton active" data-format="all">All</button>
-            <button id="CDs" class="formatButton" data-format="CD">CDs</button>
-            <button id="Vinyl" class="formatButton" data-format='Vinyl LP'>Vinyl</button>
-            <button id="DVDs" class="formatButton" data-format='Music DVD'>Music DVDs</button>
-            <button id='7" vinyl' class="formatButton" data-format='7 Inch Vinyl'>7&quot; Vinyl</button>
-            <button id='Cassette' class="formatButton" data-format='Cassette'>Cassettes</button>
-          </div>
-
-        </div>
-        <div class="modal-section">
-          <h3>Condition</h3>
-          <div class="conditionContainer">
-            <label><input type="radio" name="condition" value="all" checked>All</label>
-            <label><input type="radio" name="condition" value="new">New</label>
-            <label><input type="radio" name="condition" value="used">Used</label>
-          </div>
-        </div>
-        <div class="modal-section">
-          <div class="applyFiltersContainer">
-            <button id="applyFilters">Apply</button>
-            <button id="resetFilters">Reset</button>
-          </div>
-        </div>
+    <div  class="featured">
+      <h1>Featured Products</h1>
+      <div class="products_cont">
+        <!-- Loading bars -->
+        <div class="bars-1"></div>
       </div>
-    </div>
-
-    <div class="searchLine">
-      <form id="searchForm" class="searchbar" method="POST">
-        <input type="search" id="searchbox" placeholder="Search for artist or album..." name="searchQuery">
-        <button class="search" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </form>
-      <div class="filter_div">
-        <a href="#" class="filter-button active">Filter</a>
-        <select id="sortDropdown">
-          <option value="default" selected>Relevance</option>
-          <option value="price_high_low">Price (Highest to Lowest)</option>
-          <option value="price_low_high">Price (Lowest to Highest)</option>
-          <option value="album_a_z">Album (A to Z)</option>
-          <option value="album_z_a">Album (Z to A)</option>
-          <option value="artist_a_z">Artist (A to Z)</option>
-          <option value="artist_z_a">Artist (Z to A)</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="grid-container">
-      <!-- Loading bars -->
-      <div class="bars-1"></div>
-    </div>
-
-    <div class="center">
-      <div class="home__paginator">
-        <button id="prevPage">❮</button>
-        <button id="nextPage">❯</button>
-      </div>
+      <a id="seeAll" href="./filter.php?">See All</a>
     </div>
   </div>
 </main>
@@ -104,80 +63,24 @@ $list = [];
 
 <script>
   $(document).ready(function () {
+    // Create a media query
+    var mediaQuery1 = window.matchMedia("(max-width: 1280px)");
+    var mediaQuery2 = window.matchMedia("(max-width: 776px)");
+    var num_results = 12;
 
-    // Get filters from URL and activate the appropriate buttons in the modal.
-    var format = getParameterByName('format') || 'all';
-    activateFormatButton($('.formatButton[data-format="' + format + '"]'));
-    var searchQuery = getParameterByName('searchQuery') || "";
-    var genre = getParameterByName('genre') || 'all';
-    activateGenreButton($('.genreButton[data-genre="' + genre + '"]'));
-    var condition = getParameterByName('condition') || "all";
-    activateConditionButton(condition);
-    var order = getParameterByName('order') || "default";
-    var offset = Number(getParameterByName('offset')) || 0;
-    var gridItemsCount = $(".grid-container .product").length;
-
-
-    $("#searchbox").on("input", function () {
-      searchQuery = $(this).val(); // Update the variable with the input value
-    });
-
-    function getParameterByName(name, url) {
-      if (!url) url = window.location.href;
-      name = name.replace(/[\[\]]/g, '\\$&');
-      var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-      if (!results) return null;
-      if (!results[2]) return '';
-
-      // Remove the hash portion from the parameter value if present
-      var value = results[2].replace(/#.*$/, '');
-
-      return decodeURIComponent(value.replace(/\+/g, ' '));
+    // Check if the media query matches
+    if (mediaQuery2.matches) {
+        // The viewport width is 600px or less
+        num_results = 4;
+    } else if (mediaQuery1.matches) {
+        // The viewport width is greater than 600px
+        num_results = 8;
     }
 
-    function addQueryParamsToURL() {
-      var url = window.location.href;
-
-      // Parse the existing query parameters
-      var urlParts = url.split('?');
-      var baseUrl = urlParts[0];
-      var queryParams = urlParts[1] ? urlParts[1].split('&') : [];
-
-      // Update or remove existing query parameters
-      queryParams = queryParams.filter(function (param) {
-        return !param.startsWith('format=') && !param.startsWith('searchQuery=') && !param.startsWith('genre=') && !param.startsWith('condition=') && !param.startsWith('order=') && !param.startsWith('offset=');
-      });
-
-      // Add the new query parameters if they are not their default values
-      if (format && format !== 'all') queryParams.push('format=' + encodeURIComponent(format));
-      if (searchQuery && searchQuery !== '') queryParams.push('searchQuery=' + encodeURIComponent(searchQuery));
-      if (genre && genre !== 'all') queryParams.push('genre=' + encodeURIComponent(genre));
-      if (condition && condition !== 'all') queryParams.push('condition=' + encodeURIComponent(condition));
-      if (order && order !== 'default') queryParams.push('order=' + encodeURIComponent(order));
-      if (offset && offset !== 0) queryParams.push('offset=' + encodeURIComponent(offset));
-
-      // Combine the base URL and updated query parameters
-      var newUrl = baseUrl;
-      if (queryParams.length > 0) {
-        newUrl += '?' + queryParams.join('&');
-      }
-
-      // Modify the URL using pushState
-      history.pushState(null, '', newUrl);
-    }
-
-
-
-    function getProducts() {
+    function getRandomProducts() {
       data = {
-        'action': 'getProducts',
-        'offset_increment': offset,
-        'search_query': searchQuery,
-        'genre_option': genre,
-        'condition': condition,
-        'orderby': order,
-        'format_option': format
+        'action': 'getRandomProducts',
+        'num_results': Number(num_results)
       };
       console.log(data);
       $('.bars-1').show();
@@ -185,159 +88,24 @@ $list = [];
         if (response) {
           $('html, body').animate({ scrollTop: '0px' }, 300);
           $('.bars-1').hide();
-          $(".grid-container").html(response);
-          gridItemsCount = $(".grid-container .product").length;
-          if (gridItemsCount < 16) {
-            $('#nextPage').hide();
-          } else {
-            $('#nextPage').show();
-          }
-          if (offset === 0) {
-            $('#prevPage').hide();
-          } else {
-            $('#prevPage').show();
-          }
-          addQueryParamsToURL();
+          $(".products_cont").html(response);
         } else {
           if (offset > 0) {
-            $('#nextPage').hide();
-            addQueryParamsToURL();
           } else {
-            $('#nextPage').hide();
-            $('#prevPage').hide();
-            $(".grid-container").html("<p style='text-align:center;'>No results found!</p>");
-            addQueryParamsToURL();
+
+            $(".products_cont").html("<p style='text-align:center;'>No results found!</p>");
           }
         }
       });
     }
 
     // Retrieve products
-    getProducts();
-
-    $("#nextPage").click(function (e) {
-      e.preventDefault();
-      if (gridItemsCount === 16) {
-        offset += 16;
-        getProducts();
-      }
-    });
-
-    $("#prevPage").click(function (e) {
-      e.preventDefault();
-      if (offset !== 0) {
-        offset -= 16;
-        getProducts();
-      }
-      else {
-        $('#prevPage').hide();
-      }
-    });
-
-    // Sorting functionality
-    $("#sortDropdown").change(function () {
-      order = $(this).val();
-      $("#sortDropdown select").val($(this).val());
-      getProducts();
-    });
-
-    $("#searchForm input").on('keypress search', function (e) {
-      // Check if the Enter key was pressed (keyCode 13) or the search input was cleared
-      if (e.keyCode === 13 || e.type === 'search') {
-        e.preventDefault();
-        offset = 0;
-        getProducts();
-      }
-    });
-
-
-    $("#searchForm").submit(function (e) {
-      e.preventDefault();
-      offset = 0;
-      getProducts();
-    });
-
-    $(".filter-button").click(function () {
-      $("#filterModal").css("display", "block");
-    });
-
-    $(window).click(function (e) {
-      if (e.target == document.getElementById("filterModal")) {
-        $("#filterModal").css("display", "none");
-      }
-    });
-
-    $("#applyFilters").click(function () {
-      $("#filterModal").css("display", "none");
-      offset = 0;
-      getProducts();
-    });
-
-    function resetFilters() {
-      $(".genreButton").removeClass("active");
-      $(".genreButton[data-genre='all']").addClass("active");
-      $('.formatButton').removeClass('active');
-      $(".formatButton[data-format='all']").addClass("active");
-      $("input[name='condition'][value='all']").prop("checked", true);
-      // Reset variables
-      genre = 'all';
-      format = "all";
-      condition = "all";
-      getProducts();
-    }
-
-    $("#resetFilters").click(function () {
-      $("#filterModal").css("display", "none");
-      // Reset Buttons
-      resetFilters()
-    });
-
-    function activateConditionButton(value) {
-      $('input[name="condition"]').prop('checked', false);
-      $('input[name="condition"][value="' + value + '"]').prop('checked', true);
-    }
-
-    $("[name='condition']").click(function () {
-      var cond = $("input[name='condition']:checked").val();
-      if (cond == "new") {
-        condition = 0;
-      }
-      else if (cond == "used") {
-        condition = 1;
-      }
-      else {
-        condition = cond;
-      }
-    })
-
-    // Function to activate genre button
-    function activateGenreButton(button) {
-      $('.genreButton').removeClass('active');
-      button.addClass('active');
-    }
-
-    // Function to activate format button
-    function activateFormatButton(button) {
-      $('.formatButton').removeClass('active');
-      button.addClass('active');
-    }
-
-    $('.formatButton').mousedown(function (e) {
-      format = $(this).data('format');
-      console.log(format);
-      activateFormatButton($(this)); // Activate the clicked button
-    });
-
-    $('.modal-section .genreButton').click(function () {
-      genre = $(this).data('genre');
-      activateGenreButton($(this)); // Activate the clicked button
-      console.log(genre);
-    });
+    getRandomProducts();
 
 
     // Clicking on the Add To Cart button
-    // Binding it to .grid-container' allows both functions to work.
-    $('.grid-container').on('click', '.cart', function (e) {
+    // Binding it to .products_cont' allows both functions to work.
+    $('.products_cont').on('click', '.cart', function (e) {
       e.preventDefault(); // Prevent the default form submission
       // Function for the adding to cart effect
       var cart = $('.menu__cart');

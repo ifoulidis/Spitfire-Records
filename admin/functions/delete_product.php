@@ -5,7 +5,7 @@ if (!isset($_SESSION['admin_email'])) {
 } else {
   if (isset($_GET['id'])) {
     $id = $_GET['id'];
-    $con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
+    $con = mysqli_connect("localhost", "root", "", "spitfire_records");
     $deleteQuery = "DELETE FROM products where id = ?";
     $statement = mysqli_prepare($con, $deleteQuery);
 

@@ -12,8 +12,8 @@ $list = [];
 ?>
 
 <main>
-  <!-- Discount banner -->
-  <?php
+    <!-- Discount banner -->
+    <?php
     // 30% discount on used CDs
     $currentDateTime = new DateTime();
     $startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
@@ -26,11 +26,10 @@ $list = [];
     }
   ?>
   <div class="home__container">
-
-    <br>
     <!-- Filter Modal -->
     <div id="filterModal" class="modal">
       <div class="modal-content">
+
         <h2>Filter Options</h2>
 
         <div class="modal-section">
@@ -80,25 +79,24 @@ $list = [];
         </div>
       </div>
     </div>
-
-    <div class="searchLine">
-      <form id="searchForm" class="searchbar" method="POST">
-        <input type="search" id="searchbox" placeholder="Search for artist or album..." name="searchQuery">
-        <button class="search" type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-      </form>
-      <div class="filter_div">
-        <a href="#" class="filter-button active">Filter</a>
-        <select id="sortDropdown">
-          <option value="default" selected>Relevance</option>
-          <option value="price_high_low">Price (Highest to Lowest)</option>
-          <option value="price_low_high">Price (Lowest to Highest)</option>
-          <option value="album_a_z">Album (A to Z)</option>
-          <option value="album_z_a">Album (Z to A)</option>
-          <option value="artist_a_z">Artist (A to Z)</option>
-          <option value="artist_z_a">Artist (Z to A)</option>
-        </select>
-      </div>
+    <div class="title-banner">
+      <h1 class="pageTitle">Recent Additions</h1>
     </div>
+
+
+    <div class="latest__filters">
+      <a href="#" class="filter-button active">Filter</a>
+      <select id="sortDropdown">
+        <option value="default" selected>Relevance</option>
+        <option value="price_high_low">Price (Highest to Lowest)</option>
+        <option value="price_low_high">Price (Lowest to Highest)</option>
+        <option value="album_a_z">Album (A to Z)</option>
+        <option value="album_z_a">Album (Z to A)</option>
+        <option value="artist_a_z">Artist (A to Z)</option>
+        <option value="artist_z_a">Artist (Z to A)</option>
+      </select>
+    </div>
+
 
     <div class="grid-container">
       <!-- Loading bars -->
@@ -123,7 +121,6 @@ $list = [];
     // Get filters from URL and activate the appropriate buttons in the modal.
     var format = getParameterByName('format') || 'all';
     activateFormatButton($('.formatButton[data-format="' + format + '"]'));
-    var searchQuery = getParameterByName('searchQuery') || "";
     var genre = getParameterByName('genre') || 'all';
     activateGenreButton($('.genreButton[data-genre="' + genre + '"]'));
     var condition = getParameterByName('condition') || "all";
@@ -133,10 +130,6 @@ $list = [];
     var offset = Number(getParameterByName('offset')) || 0;
     var gridItemsCount = $(".grid-container .product").length;
 
-
-    $("#searchbox").on("input", function () {
-      searchQuery = $(this).val(); // Update the variable with the input value
-    });
 
     function getParameterByName(name, url) {
       if (!url) url = window.location.href;
@@ -162,12 +155,11 @@ $list = [];
 
       // Update or remove existing query parameters
       queryParams = queryParams.filter(function (param) {
-        return !param.startsWith('format=') && !param.startsWith('searchQuery=') && !param.startsWith('genre=') && !param.startsWith('condition=') && !param.startsWith('order=') && !param.startsWith('offset=');
+        return !param.startsWith('format=') && !param.startsWith('genre=') && !param.startsWith('condition=') && !param.startsWith('order=') && !param.startsWith('offset=');
       });
 
       // Add the new query parameters if they are not their default values
       if (format && format !== 'all') queryParams.push('format=' + encodeURIComponent(format));
-      if (searchQuery && searchQuery !== '') queryParams.push('searchQuery=' + encodeURIComponent(searchQuery));
       if (genre && genre !== 'all') queryParams.push('genre=' + encodeURIComponent(genre));
       if (condition && condition !== 'all') queryParams.push('condition=' + encodeURIComponent(condition));
       if (order && order !== 'default') queryParams.push('order=' + encodeURIComponent(order));
@@ -187,9 +179,8 @@ $list = [];
 
     function getProducts() {
       data = {
-        'action': 'getProducts',
+        'action': 'getLatestProducts',
         'offset_increment': offset,
-        'search_query': searchQuery,
         'genre_option': genre,
         'condition': condition,
         'orderby': order,
@@ -253,6 +244,7 @@ $list = [];
     // Sorting functionality
     $("#sortDropdown").change(function () {
       order = $(this).val();
+      console.log(order)
       getProducts();
     });
 

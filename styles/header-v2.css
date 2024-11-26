@@ -1,222 +1,236 @@
 header {
-  margin: 0;
-  padding: 0;
-  background-color: white;
+	margin: 0;
+	padding: 0;
+	background-color: white;
+	border-bottom: 3px solid black;
 }
 
 :any-link {
-  color: inherit;
-  padding: 8px 8px 8px 8px;
-  text-decoration: none;
-  display: block;
-  transition: 0.3s;
+	color: inherit;
+	padding: 8px 8px 8px 8px;
+	text-decoration: none;
+	display: block;
+	transition: 0.3s;
 }
 :any-link:active {
-  color: inherit;
-  padding: 8px 8px 8px 8px;
-  text-decoration: none;
-  display: block;
-  transition: 0.3s;
+	color: inherit;
+	padding: 8px 8px 8px 8px;
+	text-decoration: none;
+	display: block;
+	transition: 0.3s;
 }
 
 .sidenav {
-  height: 100%;
-  width: 0;
-  position: fixed;
-  z-index: 3;
-  top: 0;
-  left: 0;
-  background-color: black;
-  overflow-x: hidden;
-  overflow-y: visible;
-  transition: 0.2s;
-  padding-top: 60px;
-  color: white;
-  font-size: x-large;
+	height: 100%;
+	width: 0;
+	position: fixed;
+	z-index: 3;
+	top: 0;
+	left: 0;
+	background-color: black;
+	overflow-x: hidden;
+	overflow-y: visible;
+	transition: 0.2s;
+	padding-top: 60px;
+	color: white;
+	font-size: x-large;
 }
 
 .sidenav > a {
-  padding: 8px 8px 8px 8px;
-  text-decoration: none;
-  font-size: 25px;
-  color: white;
-  display: block;
-  transition: 0.3s;
-  font-size: 2em;
+	padding: 8px 8px 8px 8px;
+	text-decoration: none;
+	font-size: 25px;
+	color: white;
+	display: block;
+	transition: 0.3s;
+	font-size: 2em;
 }
 
 .sidenav a:visited {
-  text-decoration: none;
-  color: white;
+	text-decoration: none;
+	color: white;
 }
 .sidenav a:active {
-  text-decoration: none;
-  color: white;
+	text-decoration: none;
+	color: white;
 }
 
 .sidenav div {
-  padding-left: 15px;
-  border: none;
-  border-left: none;
-  background-color: none;
+	padding-left: 15px;
+	border: none;
+	border-left: none;
+	background-color: none;
 }
 
 .sidenav a:hover {
-  color: rgb(255, 18, 18);
+	color: rgb(255, 18, 18);
 }
 
 .sidenav .closebtn {
-  position: absolute;
-  top: 0;
-  right: 25px;
-  font-size: 36px;
-  margin-left: 50px;
+	position: absolute;
+	top: 0;
+	right: 25px;
+	font-size: 36px;
+	margin-left: 50px;
 }
 
 .menu {
-  display: flex;
-  width: 100%;
-  text-align: center;
-  margin: 0;
+	display: flex;
+	width: 100%;
+	text-align: center;
+	margin: 0;
 }
 
 .logo {
-  display: flex;
-  width: 60%;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+	display: flex;
+	width: 60%;
+	align-items: center;
+	justify-content: center;
+	text-align: center;
 }
 
 .logo > img {
-  mix-blend-mode: multiply;
-  width: auto;
-  min-height: 80px;
-  max-height: 200px;
+	mix-blend-mode: multiply;
+	width: auto;
+	min-height: 80px;
+	max-height: 200px;
 }
 
 #main_logo {
-  width: 150px;
-  height: 120px;
+	width: 150px;
+	height: 120px;
 }
 
 #mobile_logo {
-  display: none;
+	display: none;
 }
 
 #main_title {
-  width: 340.5px;
-  height: 110px;
+	width: 340.5px;
+	height: 110px;
 }
 
 .logo div {
-  display: flex;
-  flex-direction: column;
+	display: flex;
+	flex-direction: column;
+}
+
+body::-webkit-scrollbar {
+	width: 12px;
+}
+
+body::-webkit-scrollbar-track {
+	box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+	background-color: red;
+	outline: 1px solid slategrey;
 }
 
 .menu__right {
-  width: 20%;
-  text-align: center;
-  display: flex;
-  padding-top: 1em;
-  height: 50%;
-  align-items: center;
-  justify-content: flex-end;
-  color: black;
-  padding-right: 1em;
-  cursor: pointer;
+	width: 20%;
+	text-align: center;
+	display: flex;
+	padding-top: 1em;
+	height: 50%;
+	align-items: center;
+	justify-content: flex-end;
+	color: black;
+	padding-right: 1em;
+	cursor: pointer;
 }
 
 .menu__cart {
-  margin-right: 10px;
+	margin-right: 10px;
 }
 
 .menu__bars {
-  color: black;
-  font-size: x-large;
-  overflow: visible;
+	color: black;
+	font-size: x-large;
+	overflow: visible;
 }
 
 .menu > a,
 .menu > a:hover,
 .menu > a:active,
 .menu > a:visited {
-  text-decoration: none;
-  color: inherit;
+	text-decoration: none;
+	color: inherit;
 }
 
 .menu__left {
-  float: left;
-  width: 20%;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 1em;
-  height: 50%;
+	float: left;
+	width: 20%;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	padding-left: 1em;
+	height: 50%;
 }
 
 .dropdownItem {
-  display: block;
-  margin-right: 10px;
-  margin-bottom: 1.5em;
+	display: block;
+	margin-right: 10px;
+	margin-bottom: 1.5em;
 }
 
 .dropdown-content {
-  display: none;
-  padding: 10px;
-  max-height: 200px; /* Adjust the max height as needed */
-  overflow-y: auto;
+	display: none;
+	padding: 10px;
+	max-height: 200px; /* Adjust the max height as needed */
+	overflow-y: auto;
 }
 
 .dropdown-content a {
-  color: inherit;
-  text-decoration: none;
-  display: block;
-  margin-bottom: 5px;
+	color: inherit;
+	text-decoration: none;
+	display: block;
+	margin-bottom: 5px;
 }
 
 .dropdownItem.open .dropdown-content {
-  display: block;
+	display: block;
 }
 
 #overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  z-index: 9998; /* Set the z-index below the menu */
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.4);
+	z-index: 9998; /* Set the z-index below the menu */
 }
 
 @media screen and (max-width: 775px) {
-  #main_logo {
-    display: none;
-  }
-  #main_title {
-    display: none;
-  }
-  #mobile_logo {
-    display: block;
-    width: 110px;
-    height: 110px;
-  }
+	#main_logo {
+		display: none;
+	}
+	#main_title {
+		display: none;
+	}
+	#mobile_logo {
+		display: block;
+		width: 110px;
+		height: 110px;
+	}
 }
 
 @media screen and (max-width: 450px) {
-  .sidenav {
-    padding-top: 15px;
-  }
+	.sidenav {
+		padding-top: 15px;
+	}
 
-  .sidenav div {
-    padding-left: 15px;
-  }
+	.sidenav div {
+		padding-left: 15px;
+	}
 
-  .dropdown-content {
-    font-size: x-large;
-  }
+	.dropdown-content {
+		font-size: x-large;
+	}
 
-  .dropdownItem {
-    font-size: xx-large;
-  }
+	.dropdownItem {
+		font-size: xx-large;
+	}
 }

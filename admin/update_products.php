@@ -21,7 +21,7 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
 
   <head>
     <title>Update Products</title>
-    <link href="../styles/style-v2.css" rel="stylesheet">
+    <link href="../styles/style-v3.css" rel="stylesheet">
     <link href="css/admin_style.css" rel="stylesheet">
 
     <link
@@ -56,7 +56,10 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
             }
             sort($list);
             foreach ($list as $item) {
-              echo "<a href='#' class='genreButton' data-genre='$item'>$item</a>";
+              if ($item !== 'null') {
+                $url_key = rawurlencode($item);
+                echo "<a href='#' class='genreButton' data-genre='$url_key'>$item</a>";
+              }
             }
             ?>
           </div>
@@ -274,7 +277,7 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
         getProducts();
       });
 
-      $(".filter-button").click(function () {
+      $(".filter_button").click(function () {
         $("#filterModal").css("display", "block");
       });
 

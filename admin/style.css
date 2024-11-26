@@ -1,0 +1,35 @@
+body,
+html {
+  height: 100%;
+}
+
+.bgimg {
+  background-image: url("fullLogo.png");
+  /* Full-screen */
+  height: 100%;
+  /* Center the background image */
+  background-position: center;
+  /* Scale and zoom in the image */
+  background-size: cover;
+  position: relative;
+  /* Add a white text color to all elements inside the .bgimg container */
+  color: white;
+  /* Add a font */
+  font-family: "Courier New", Courier, monospace;
+  /* Set the font-size to 25 pixels */
+  font-size: 30px;
+}
+
+.middle {
+  position: absolute;
+  text-shadow: 2px 2px 2px black;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+hr {
+  margin: auto;
+  width: 40%;
+}

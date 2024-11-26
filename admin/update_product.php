@@ -100,7 +100,7 @@ if (!isset($_SESSION['admin_email'])) {
       // Execute the update statement
       if (mysqli_stmt_execute($stmt)) {
         echo "Product updated successfully.";
-        echo "<a href='" . $return . "'>Return To Products</a>";
+        echo "<a href='" . $return . "'>Return To Previous Page</a>";
       } else {
         echo "Error updating product: " . mysqli_error($con);
       }
@@ -264,15 +264,15 @@ if (!isset($_SESSION['admin_email'])) {
           <div class="col-75">
             <select name="format" required>
               <option value="">Select Format</option>
-              <option value="Vinyl LP" <?php if ($format == 'Vinyl LP')
+              <option value="Vinyl LP" <?php if ($row['format'] == 'Vinyl LP')
                 echo 'selected'; ?>>Vinyl LP</option>
-              <option value="CD" <?php if ($format == 'CD')
+              <option value="CD" <?php if ($row['format'] == 'CD')
                 echo 'selected'; ?>>CD</option>
-              <option value="Music DVD" <?php if ($format == 'Music DVD')
+              <option value="Music DVD" <?php if ($row['format'] == 'Music DVD')
                 echo 'selected'; ?>>Music DVD</option>
-              <option value="7 Inch Vinyl" <?php if ($format == '7 Inch Vinyl')
+              <option value="7 Inch Vinyl" <?php if ($row['format'] == '7 Inch Vinyl')
                 echo 'selected'; ?>>7" Vinyl</option>
-              <option value="Cassette" <?php if ($format == 'Cassette')
+              <option value="Cassette" <?php if ($row['format'] == 'Cassette')
                 echo 'selected'; ?>>Cassette</option>
             </select>
             <br><br>

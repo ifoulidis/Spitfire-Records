@@ -25,7 +25,7 @@ if (!isset($_SESSION['admin_email'])) {
 
     <?php
 
-    $con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
+    $con = mysqli_connect("localhost", "root", "", "spitfire_records");
     if ($con->connect_error) {
       echo "<script>console.log('Debug Objects: " . $con->connect_error . "' );</script>";
     }

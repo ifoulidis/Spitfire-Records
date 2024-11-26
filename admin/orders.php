@@ -26,7 +26,7 @@ if (!isset($_SESSION['admin_email'])) {
   $offset = ($current_page - 1) * $limit;
 
   // Retrieve products with pagination
-  $query = "SELECT * FROM orders ORDER BY 'DATE' LIMIT $limit OFFSET $offset";
+  $query = "SELECT * FROM `orders` ORDER BY date DESC LIMIT $limit OFFSET $offset";
   $result = mysqli_query($con, $query);
 
   ?>

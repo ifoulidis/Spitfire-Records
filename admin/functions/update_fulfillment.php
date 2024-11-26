@@ -4,7 +4,7 @@ if (!isset($_SESSION['admin_email'])) {
   echo "<script>window.open('log_in.php', '_self')</script>";
 } else {
   if (isset($_GET['id']) && isset($_GET['completion'])) {
-    $con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
+    $con = mysqli_connect("localhost", "root", "", "spitfire_records");
 
     $orderID = mysqli_real_escape_string($con, $_GET['id']);
     $fulfillment_status = mysqli_real_escape_string($con, $_GET['completion']);

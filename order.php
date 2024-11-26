@@ -9,11 +9,18 @@ $ip_add = getRealUserIp();
 
 $status = "pending";
 
+// 30% discount on used CDs
+$currentDateTime = new DateTime();
+$startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
+$endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
+$priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.7 : 1;
+
 if (isset($_GET['token'])) {
   echo '<script type="text/javascript">alert("Looks like something went wrong! Please try again.")</script>';
 }
 
 if (isset($_POST["email"])) {
+  $_SESSION["current_order"] = [];
   $customer_name = $_POST["name"];
   $_SESSION["customer_name"] = $customer_name;
   $customer_email = $_POST["email"];
@@ -26,6 +33,7 @@ if (isset($_POST["email"])) {
   $_SESSION['shipping_method'] = $shipping_type;
 
   $invoice_no = mt_rand(1, 100000);
+  $_SESSION["invoice_number"] = $invoice_no;
 
   $select_cart = "select * from cart where ip_add='$ip_add'";
 
@@ -36,14 +44,12 @@ if (isset($_POST["email"])) {
   $price_before_shipping = 0;
 
   while ($row_cart = mysqli_fetch_array($run_cart)) {
-
-
     $pro_id = $row_cart['p_id'];
     $pro_price = $row_cart['p_price'];
     $pro_qty = $row_cart['qty'];
 
     $select_product = "select * from products where id='$pro_id'";
-    $price_before_shipping += ($pro_price * $pro_qty) * 100;
+    $_SESSION["current_order"][] = $pro_id;
 
     $run_product_find = mysqli_query($db, $select_product);
 
@@ -51,13 +57,18 @@ if (isset($_POST["email"])) {
       if ($product_found['format'] === "Vinyl LP" || $product_found['format'] === '7" Vinyl') {
         $is_vinyl = 1;
       }
+      // Discount
+      if ($product_found['new/used'] == 1 and $product_found['format'] === "CD") {
+        $pro_price = round(($row_cart['p_price'] * $pro_qty) * $priceMultiplier, 2);
+      }
+      $price_before_shipping += ($pro_price * $pro_qty) * 100;
+
     }
 
     // Add to orders table
     // The statement checks whether the same order already exists for this customer.
     // If it does, it is simply updated date-wise.
     // Otherwise, the order is added to the table.
-    // Assuming you have already established a database connection and assigned it to the $con variable
 
     $insert_pending_order = "INSERT INTO orders (customer_name, street, town, zip, email, phone, invoice_no, product_id, qty, order_status, fulfillment_status, date)
       SELECT '$customer_name', '$customer_street', '$customer_town', '$customer_zip', '$customer_email', '$customer_phone', '$invoice_no', '$pro_id', '$pro_qty', '$status', 'incomplete', NOW()
@@ -75,13 +86,13 @@ if (isset($_POST["email"])) {
   }
 
   if ($shipping_type === "urban" and $is_vinyl === 0) {
-    $shipping = 600;
+    $shipping = 650;
   } else if ($shipping_type === "rural" and $is_vinyl === 0) {
-    $shipping = 1150;
+    $shipping = 1220;
   } else if ($shipping_type === "urban" and $is_vinyl === 1) {
-    $shipping = 1200;
+    $shipping = 1250;
   } else if ($shipping_type === "rural" and $is_vinyl === 1) {
-    $shipping = 1750;
+    $shipping = 1820;
   } else if ($shipping_type === "pickup") {
     $shipping = 0;
   } else {
@@ -236,8 +247,8 @@ if (isset($_POST["email"])) {
         </div>
       </div>
       <div class="checkout__buttons">
-        <input type="submit" value="Pay With Stripe" id="PayStripe" title="Coming soon!" class="orders__btn">
-        <input type="submit" value="Bank Transfer" title="Coming soon!" id="Bank" class="orders__btn">
+        <input type="submit" value="Debit/Credit" id="PayStripe" class="orders__btn">
+        <input type="submit" value="Bank Transfer" id="Bank" class="orders__btn">
       </div>
     </form>
   </div>

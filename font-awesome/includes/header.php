@@ -6,14 +6,13 @@
   <!-- Meta info tags -->
   <meta property='og:title' content='Spitfire Records' />
   <!-- Thumbnail image -->
-  <meta property='og:image' content='https://spitfirerecords.co.nz/images/thumbnail_logo.jpeg' />
+  <meta property='og:image' content='https://spitfirerecords.co.nz/images/thumbnail.jpg' />
   <meta property='og:description' content='NZ&#39;s Home of Hard Rock Records' />
   <meta property='og:url' content='https://spitfirerecords.co.nz' />
   <meta property='og:image:width' content='1200' />
   <meta property='og:image:height' content='1200' />
   <meta name="twitter:image" content="https://spitfirerecords.co.nz/images/thumbnail_twitter.jpg">
   <meta property="og:type" content='website' />
-  <meta name="description" content='NZ&#39;s Home of Hard Rock Records' />
   <!-- Fonts -->
   <link
     href="https://fonts.googleapis.com/css?family=Handlee|Roboto:wght@100,400|Courgette|Bruno+Ace|New+Rocker|Space+Grotesk:400,700|Montserrat:400,700|Roboto&display=swap"
@@ -22,18 +21,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- J-Query -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
   <!-- Font Awesome -->
   <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
 
-  <!-- Stripe (checks for suspicious behaviour among users) -->
-  <script src="https://js.stripe.com/v3/"></script>
-
   <title>Spitfire Records</title>
   <link href="styles/header-v2.css" rel="stylesheet">
-  <link href="styles/style-v3.css" rel="stylesheet">
+  <link href="styles/style-v2.css" rel="stylesheet">
+  <link href="styles/product-v2.css" rel="stylesheet">
   <link href="styles/cart.css" rel="stylesheet">
   <link href="styles/footer.css" rel="stylesheet">
 
@@ -59,15 +53,12 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
           <img src="./images/logo.png" width=150 height=120 id="pullOut_logo" alt="Spitfire Records logo">
         </a>
         <div class="dropdownItem">
-          <a href="latest-v1.php"><strong>Latest Additions</strong></a>
-        </div>
-        <div class="dropdownItem">
           <a href="#"><strong>By Format</strong> <i class="fa-solid fa-chevron-down fa-sm"></i></a>
           <div class="dropdown-content">
             <a href="filter.php?format=CD">CDs</a>
             <a href=<?php echo "filter.php?format=" . urlencode("Vinyl LP") ?>>Vinyl</a>
             <a href=<?php echo "filter.php?format=" . urlencode("Music DVD") ?>>Music DVD</a>
-            <a href=<?php echo "filter.php?format=" . urlencode('7 Inch Vinyl') ?>>7&quot; Vinyl</a>
+            <a href=<?php echo "filter.php?format=" . urlencode('7" Vinyl') ?>>7&quot; Vinyl</a>
             <a href=<?php echo "filter.php?format=" . urlencode("Cassette") ?>>Cassette</a>
           </div>
         </div>
@@ -94,8 +85,8 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
         <div class="dropdownItem">
           <a href="#"><strong>By Condition</strong> <i class="fa-solid fa-chevron-down fa-sm"></i></a>
           <div class="dropdown-content">
-            <a href="filter.php?condition=new">New</a>
-            <a href="filter.php?condition=used">Used</a>
+            <a href="filter.php?condition=0">New</a>
+            <a href="filter.php?condition=1">Used</a>
           </div>
         </div>
 
@@ -163,7 +154,7 @@ UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
             }
           });
           // Clicking on the cart icon in the menu.
-          $('.menu__right').click(function () {
+          $('.menu__cart').click(function () {
             window.location.href = 'cart.php';
             return false;
           });

@@ -1,6 +1,7 @@
 // This is your test publishable API key.
 const stripe = Stripe(
-  "pk_live_51N8t7mLXNwr4MuvzGu15zfYd2dWY5ggM58Qd0bpT0MIXxuoYouo0YJABBXU7NXaTOjx3lYqih2kZ8bvU2jCGp77x00ZP9lCUNg"
+  "pk_live_51N8t7mLXNwr4MuvzGu15zfYd2dWY5ggM58Qd0bpT0MIXxuoYouo0YJABBXU7NXaTOjx3lYqih2kZ8bvU2jCGp77x00ZP9lCUNg",
+  { apiVersion: "2022-11-15" }
 );
 
 // The items the customer wants to buy

@@ -1,6 +1,6 @@
 <?php
 
-$con = mysqli_connect("localhost", "spitfire_ezzierara", "mC75KFzdcAEEjmV*&", "spitfire_db_the_first");
+$con = mysqli_connect("localhost", "root", "", "spitfire_records");
 
 $query = "INSERT INTO `products`(`album`, `artist`, `year`, `genre1`, `genre2`, `genre3`, `description`, `regular_price`, `new/used`, `media-condition`, `sleeve/insert condition`, `video_link`, `track_listing`, `format`, `number_of_discs/records`, `Pressing Year`, `Pressing Country`, `Record Label`, `stock`)";
 $query .= " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";

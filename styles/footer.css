@@ -6,13 +6,11 @@
   color: #dd300f;
   font-family: "Bruno Ace", cursive;
   background-color: black;
-  border-top-left-radius: 5em;
-  border-top-right-radius: 5em;
 }
 
-.facebookLink > a,
-.contactLink > a,
-.designed > a {
+.facebookLink>a,
+.contactLink>a,
+.designed>a {
   padding: 3px;
   transition: scale 1s;
 }
@@ -69,6 +67,7 @@
 .contact {
   font-size: large;
 }
+
 .admin {
   font-size: x-small;
   align-self: end;
@@ -84,18 +83,22 @@
   .footer__mainDiv {
     flex-direction: column;
   }
+
   .facebookLink,
   .contactLink,
   .designed {
     width: fit-content;
   }
+
   .facebookLink {
     justify-content: center;
   }
+
   .header__seperator1,
   .header__seperator2 {
     display: none;
   }
+
   .header__separatorMobile1,
   .header__separatorMobile2 {
     display: block;
@@ -103,6 +106,7 @@
     border: solid 1px white;
     border-style: inset;
   }
+
   .admin {
     margin-top: 1em;
   }
