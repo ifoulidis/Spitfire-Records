@@ -62,7 +62,6 @@ function getProducts($searchstring = "", $genre = "all", $format = "all", $condi
         <th>Media Condition</th>
         <th>Sleeve/Insert Condition</th>
         <th>Format</th>
-        <th>Pressing Year</th>
         <th>Stock</th>
         <th>Remove</th>
       </tr>";
@@ -76,7 +75,6 @@ function getProducts($searchstring = "", $genre = "all", $format = "all", $condi
       echo "<td>" . $row_products['regular_price'] . "</td>";
       echo "<td>" . $row_products['media-condition'] . "</td>";
       echo "<td>" . $row_products['sleeve/insert condition'] . "</td>";
-      echo "<td>" . $row_products['Pressing Year'] . "</td>";
       echo "<td>" . $row_products['format'] . "</td>";
       echo "<td>" . $row_products['stock'] . "</td>";
       // Fix this button's functionality.

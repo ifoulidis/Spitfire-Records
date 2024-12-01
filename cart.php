@@ -140,16 +140,16 @@ include("includes/header.php");
           <?php echo $total; ?>
         </h1>
         <p class="text-muted">
-          Vinyl - $12.00 Flat Rate Nationwide (Non Rural)
+          Vinyl - $12.50 Flat Rate Nationwide (Non Rural)
         </p>
         <p class="text-muted">
-          Vinyl - $17.50 Flat Rate Nationwide (Rural)
+          Vinyl - $18.20 Flat Rate Nationwide (Rural)
         </p>
         <p class="text-muted">
-          CDs - $6.00 Flat Rate Nationwide (Non Rural)
+          CDs - $6.50 Flat Rate Nationwide (Non Rural)
         </p>
         <p class="text-muted">
-          CDs - $11.50 Flat Rate Nationwide (Rural)
+          CDs - $12.20 Flat Rate Nationwide (Rural)
         </p>
         <p class="text-muted">
           Free Pickup Near Matamata
