@@ -9,11 +9,11 @@ $ip_add = getRealUserIp();
 
 $status = "pending";
 
-// 30% discount on used CDs
+// 50% discount on used compilation CDs
 $currentDateTime = new DateTime();
-$startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
-$endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
-$priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.7 : 1;
+$startDateTime = new DateTime('2025-01-15 00:00:00'); // Wednesday, January 15, 2025, 12:00 AM
+$endDateTime = new DateTime('2024-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
+$priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.5 : 1;
 
 if (isset($_GET['token'])) {
   echo '<script type="text/javascript">alert("Looks like something went wrong! Please try again.")</script>';
@@ -58,7 +58,7 @@ if (isset($_POST["email"])) {
         $is_vinyl = 1;
       }
       // Discount
-      if ($product_found['new/used'] == 1 and $product_found['format'] === "CD") {
+      if ($product_found['new/used'] == 1 and $product_found['format'] === "CD" and str_contains($product_found['artist'], 'Various')) {
         $pro_price = round(($row_cart['p_price'] * $pro_qty) * $priceMultiplier, 2);
       }
       $price_before_shipping += ($pro_price * $pro_qty) * 100;

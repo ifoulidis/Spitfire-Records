@@ -6,10 +6,20 @@ include("includes/header.php");
 
 <main>
   <div id="content">
-    <!-- <div class="sale__banner">
-        <h1>50% off Used CDs</h1>
-        <p>Ends Wednesday the 27th at 11:59 PM</p>
-    </div> -->
+  <!-- Discount banner -->
+  <?php
+    // 50% discount on used compilation CDs
+    $currentDateTime = new DateTime();
+    $startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
+    $endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
+    if ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime){
+      echo '  <div class="sale__banner">
+      <h1>50% Off Used Compilation CDs</h1>
+      <p>Ends Midnight Febraury 1st</p>
+      </div>
+      <br>'; 
+    }
+  ?>
     <div class="cart__container">
       <div class="column" id="cart">
         <div class="box">
@@ -54,12 +64,13 @@ include("includes/header.php");
                   
                   $_SESSION['products'][] = array("title" => $product_title, "quantity" => $pro_qty);
                   
-                  // 30% discount on used CDs
+                  // 50% discount on used compilation CDs
                   $currentDateTime = new DateTime();
-                  $startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
-                  $endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
-                  $priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.7 : 1;
-                  if ($row_products['new/used'] == 1 and $row_products['format'] === "CD") {
+                  $startDateTime = new DateTime('2025-01-15 00:00:00'); // Wednesday, January 15, 2025, 12:00 AM
+                  $endDateTime = new DateTime('2024-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
+                  $priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.5 : 1;
+
+                  if ($row_products['new/used'] == 1 and $row_products['format'] === "CD" and str_contains($product_found['artist'], 'Various')) {
                     $only_price = round($only_price * $priceMultiplier, 2);
                     $only_price = number_format($only_price, 2, '.', '');
                     $sub_total = round(($only_price * $pro_qty), 2);

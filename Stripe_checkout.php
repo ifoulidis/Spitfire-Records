@@ -7,12 +7,12 @@ require_once 'secrets-v1.php';
 
 $ip_add = getRealUserIp();
 $shipping_rate = "";
-// 30% discount on used CDs
-// 30% discount on used CDs
+// 50% discount on used compilation CDs
 $currentDateTime = new DateTime();
-$startDateTime = new DateTime('2024-11-27 00:00:00'); // Wednesday, November 11, 2024, 12:00 AM
-$endDateTime = new DateTime('2024-12-01 23:59:59');   // Sunday, December 1, 2024, 11:59 PM
-$priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.7 : 1;
+$startDateTime = new DateTime('2025-01-15 00:00:00'); // Wednesday, January 15, 2025, 12:00 AM
+$endDateTime = new DateTime('2024-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
+$priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.5 : 1;
+
 
 if ($_SESSION['shipping_cost'] == 650) {
   // 
@@ -50,8 +50,9 @@ while ($row_cart = mysqli_fetch_array($run_cart)) {
 
   while ($product_found = mysqli_fetch_array($run_product_find)) {
     $name_string = $product_found['album'] . ", " . $product_found['artist'];
-    if ($product_found['new/used'] == 1 and $product_found['format'] === "CD") {
-      $product_price = round($row_cart['p_price'] * $priceMultiplier, 2) * 100;
+    // Discount
+    if ($product_found['new/used'] == 1 and $product_found['format'] === "CD" and str_contains($product_found['artist'], 'Various')) {
+      $pro_price = round(($row_cart['p_price'] * $pro_qty) * $priceMultiplier, 2);
     }
     else{
       $product_price = $row_cart['p_price'] * 100;
