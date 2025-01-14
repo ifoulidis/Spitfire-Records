@@ -8,9 +8,9 @@ if (!isset($_SESSION['admin_email'])) {
 } else {
   include("../includes/db.php");
 
-  $genraQuery = "SELECT DISTINCT genre1 FROM products WHERE stock > 0
-UNION SELECT DISTINCT genre2 FROM products WHERE stock > 0
-UNION SELECT DISTINCT genre3 FROM products WHERE stock > 0";
+  $genraQuery = "SELECT DISTINCT genre1 FROM products
+    UNION SELECT DISTINCT genre2 FROM products
+    UNION SELECT DISTINCT genre3 FROM products";
   global $con;
   $searchResults = mysqli_query($con, $genraQuery);
   $list = [];

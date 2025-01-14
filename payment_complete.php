@@ -103,9 +103,9 @@ $type = $_SESSION['payment_type'];
           // 50% discount on used compilation CDs
           $currentDateTime = new DateTime();
           $startDateTime = new DateTime('2025-01-15 00:00:00'); // Wednesday, January 15, 2025, 12:00 AM
-          $endDateTime = new DateTime('2024-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
+          $endDateTime = new DateTime('2025-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
           $priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.5 : 1;
-          if ($row_products['new/used'] == 1 and $row_products['format'] === "CD" and str_contains($product_found['artist'], 'Various')) {
+          if ($row_products['new/used'] == 1 and $row_products['format'] === "CD" and str_contains($row_products['artist'], 'Various')) {
             $pro_price = round($pro_price * $priceMultiplier, 2);
             $subtotal = number_format(round($pro_price * $qty, 2), 2);
           }

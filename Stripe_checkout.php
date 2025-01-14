@@ -10,7 +10,7 @@ $shipping_rate = "";
 // 50% discount on used compilation CDs
 $currentDateTime = new DateTime();
 $startDateTime = new DateTime('2025-01-15 00:00:00'); // Wednesday, January 15, 2025, 12:00 AM
-$endDateTime = new DateTime('2024-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
+$endDateTime = new DateTime('2025-01-31 23:59:59');   // Friday, January 31, 2025, 11:59 PM
 $priceMultiplier = ($currentDateTime >= $startDateTime && $currentDateTime <= $endDateTime) ? 0.5 : 1;
 
 
@@ -52,7 +52,7 @@ while ($row_cart = mysqli_fetch_array($run_cart)) {
     $name_string = $product_found['album'] . ", " . $product_found['artist'];
     // Discount
     if ($product_found['new/used'] == 1 and $product_found['format'] === "CD" and str_contains($product_found['artist'], 'Various')) {
-      $pro_price = round(($row_cart['p_price'] * $pro_qty) * $priceMultiplier, 2);
+      $product_price = round(($row_cart['p_price'] * $pro_qty) * $priceMultiplier, 2) * 100;
     }
     else{
       $product_price = $row_cart['p_price'] * 100;
@@ -70,7 +70,7 @@ foreach ($dynamicProducts as $product) {
   $lineItems[] = [
     'price_data' => [
       'currency' => 'nzd',
-      'unit_amount' => $product['price'],       // The price in cents
+      'unit_amount' => $product['price'], // The price in cents
       'product_data' => [
         'name' => $product['name'],
       ],

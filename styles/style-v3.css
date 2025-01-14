@@ -36,6 +36,12 @@ main {
 	text-align: center;
 }
 
+.sale__badge {
+	border-radius: 0.5rem;
+	background-color: rgba(0, 255, 0, 0.6);
+	padding: 0.2rem;
+}
+
 .cardBox {
 	display: flex;
 	flex-direction: row;

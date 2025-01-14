@@ -1,20 +1,19 @@
 <?php
 
-$db = mysqli_connect("localhost", "root", "", "spitfire_records");
-
+include("../../includes/db.php");
 
 function getProducts($searchstring = "", $genre = "all", $format = "all", $condition = "all", $offset = 0)
 {
-  global $db;
+  global $con;
 
   // URL to return (pagination)
   $return_url = $_POST['url'];
   //  Search string filter
-  $query_portion = ' ';
+  $query_portion = 'WHERE';
   if ($searchstring != "") {
     $strings = explode(' ', $searchstring);
     foreach ($strings as $value) {
-      $query_portion = ' AND (';
+      $query_portion .= $query_portion === 'WHERE' ? ' (' : ' AND (';
       $int = intval($value);
       // Check the album, artist, and format for a match to each part of the search string
       $query_portion .= "id LIKE '%$int%' or album LIKE '%$value%' OR artist LIKE '%$value%' ";
@@ -23,24 +22,22 @@ function getProducts($searchstring = "", $genre = "all", $format = "all", $condi
   }
   //  Genre filter
   if ($genre != 'all') {
-    $query_portion .= " AND (genre1 = '$genre' OR  genre2 = '$genre' OR  genre3 = '$genre') ";
+    $query_portion .= $query_portion = $query_portion === 'WHERE' ? ' (' : " AND (genre1 = '$genre' OR  genre2 = '$genre' OR  genre3 = '$genre') ";
   }
   // Condition filter
   if ($condition != "all") {
     if ($condition == 0) {
-      $query_portion .= " AND `new/used` = 0 ";
+      $query_portion .= $query_portion = $query_portion === 'WHERE' ? ' (' : " AND `new/used` = 0 ";
     } else {
-      $query_portion .= " AND `new/used` = 1 ";
+      $query_portion .= $query_portion = $query_portion === 'WHERE' ? ' (' : " AND `new/used` = 1 ";
     }
   }
   //  Format filter
   if ($format != "all") {
-    $query_portion .= " AND format = '$format' ";
+    $query_portion .= $query_portion === 'WHERE' ? "format = '$format' " : "AND format = '$format' ";
   }
 
-  $searchQuery = "SELECT *
-    FROM products
-    WHERE stock >= 0" .
+  $searchQuery = "SELECT * FROM products " .
     $query_portion .
     "ORDER BY IF(id LIKE '$searchstring%', 0, 1), 
               IF(album LIKE '%$searchstring%', 0, 1), 
@@ -50,8 +47,7 @@ function getProducts($searchstring = "", $genre = "all", $format = "all", $condi
     LIMIT 15 
     OFFSET $offset";
 
-
-  $searchResults = mysqli_query($db, $searchQuery);
+  $searchResults = mysqli_query($con, $searchQuery);
   if ($searchResults) {
     echo "<tr>
         <th>Update</th>
@@ -83,7 +79,7 @@ function getProducts($searchstring = "", $genre = "all", $format = "all", $condi
       echo "</tr>";
     }
   } else {
-    $errorMessage = mysqli_error($db);
+    $errorMessage = mysqli_error($con);
     echo "Error executing query: $errorMessage";
   }
 }
